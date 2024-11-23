@@ -114,6 +114,7 @@ def sandbox(num_resistors):
     # Create resistor boxes along the bottom
     resistors = []
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
+    dummy_img_size = (64,64)
     def_img_size = (32,32)
     Res100 = pygame.transform.scale(Res100, def_img_size)
     for i in range(num_resistors):

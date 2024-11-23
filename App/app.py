@@ -27,6 +27,12 @@ button_data = [
     {"text": "About the Devs", "rect": pygame.Rect(275, 440, 250, 60), "screen": "yellow"},
 ]
 
+level_data = [
+    {'number': '1', "rect": pygame.Rect(275, 200, 250, 60), 
+    'number' : '2', 'rect' : pygame.Rect(275, 200, 250, 60)}
+
+]
+
 level_buttons = [pygame.Rect(100 + i % 3 * 200, 150 + i // 3 * 200, 150, 150) for i in range(6)]
 
 lightning_timer = 0
@@ -61,7 +67,17 @@ def draw_buttons(mouse_pos):
         screen.blit(text_surface, text_rect)
 
 def sandbox():
-    pass
+    while True:
+        mouse_pos = pygame.mouse.get_pos()
+        screen.fill(BLACK)
+        for level in level_data:
+            rect = level["rect"]
+            color = BUTTON_HOVER_COLOR if rect.collidepoint(mouse_pos) else BUTTON_COLOR
+            pygame.draw.rect(screen, color, rect, border_radius=10)
+            text_surface = button_font.render(level["number"], True, WHITE)
+            text_rect = text_surface.get_rect(center=rect.center)
+            screen.blit(text_surface, text_rect)
+            
 def level_mode():
     pass
 def about_devs():

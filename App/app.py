@@ -19,7 +19,7 @@ BUTTON_HOVER_COLOR = (0, 150, 250)
 LIGHTNING_COLOR = (255, 255, 0)  # Yellow lightning
 
 #Stuff Relating to Drag Mechanic
-BOX_WIDTH, BOX_HEIGHT = 80, 80
+BOX_WIDTH, BOX_HEIGHT = 30, 30
 BOX_SPACING = 20
 num_boxes = 5
 
@@ -28,10 +28,11 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font(None, 72)
-button_font = pygame.font.Font(None, 48)
+title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
 
 # Button data for the title screen
+button_image = pygame.image.load('images/ui/button.png')
 button_data = [
     {"text": "Sandbox", "rect": pygame.Rect(451, 200, 250, 60), "screen": "sandbox"},
     {"text": "Level Select", "rect": pygame.Rect(451, 280, 250, 60), "screen": "levels"},
@@ -109,14 +110,42 @@ def draw_grid():
     screen.blit(bottom_ui, (256,672)) # Bottom
     screen.blit(grid, (256, 32))
 
-def sandbox(num_resistors):
+def grid_area(num_resistors, num_bulbs, num_switch):
     # Create resistor boxes along the bottom
+    wires = []
+    components = []
     resistors = []
+    bulbs = []
+    switches = []
+    def_img_size = (32,32)
+    bulb_img_size = (60,60)
+    Res100 = pygame.image.load('images/resistors/resistor 100.png')
+    Res100 = pygame.transform.scale(Res100, def_img_size)
+    bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
+    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
+    switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
+    wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     for i in range(num_resistors):
-        x = i * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
-
+    components.append(resistors)
+    for i in range(num_bulbs):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        bulbs.append(pygame.Rect(x+50, y  , BOX_WIDTH, BOX_HEIGHT))
+    components.append(bulbs)
+    for i in range(num_switch):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        switches.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(switches)
+    for i in range(200):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        wires.append(pygame.Rect(x+150, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(wires)
+    
     # Variables to track dragging state
     dragging = False
     dragged_box = None
@@ -126,19 +155,21 @@ def sandbox(num_resistors):
     clock = pygame.time.Clock()
     while True:
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for box in resistors:
-                    if box.collidepoint(event.pos):
-                        dragging = True
-                        dragged_box = box
-                        # Calculate offset between mouse and box corner
-                        offset_x = box.x - event.pos[0]
-                        offset_y = box.y - event.pos[1]
-                        break
+                for type in components:
+                    for box in type:
+                        if box.collidepoint(event.pos):
+                            dragging = True
+                            dragged_box = box
+                            # Calculate offset between mouse and box corner
+                            offset_x = box.x - event.pos[0]
+                            offset_y = box.y - event.pos[1]
+                            break
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging = False
@@ -147,8 +178,8 @@ def sandbox(num_resistors):
             elif event.type == pygame.MOUSEMOTION and dragging:
                 # Update box position while dragging
                 if dragged_box:
-                    dragged_box.x = event.pos[0] + offset_x
-                    dragged_box.y = event.pos[1] + offset_y
+                    dragged_box.x = round((event.pos[0] + offset_x)/32)*32
+                    dragged_box.y = round((event.pos[1] + offset_y)/32)*32
                     # Keep box within screen bounds
                     dragged_box.x = max(0, min(SCREEN_WIDTH - BOX_WIDTH, dragged_box.x))
                     dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))
@@ -156,11 +187,14 @@ def sandbox(num_resistors):
         # Draw background and resistors
         draw_grid()
         for box in resistors:
-            pygame.draw.rect(screen, RED, box)
-            pygame.draw.rect(screen, BLACK, box, 2)  # Border for clarity
-
+            screen.blit(Res100, (box.x, box.y))   
+        for bulb in bulbs:
+            screen.blit(bulb_off, (bulb.x, bulb.y))
+        for switch in switches:
+            screen.blit(switch_off, (switch.x, switch.y))
+        for wire in wires:
+            screen.blit(wire_long, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
-        clock.tick(60)  # Limit to 60 FPS
         
 
 
@@ -172,17 +206,14 @@ def main():
         mouse_pos = pygame.mouse.get_pos()
         screen.fill(BLACK if current_screen == "title" else WHITE)
 
-        # Handle screen logic
         if current_screen == "title":
-            # Draw title
             title_surface = title_font.render("Lights Out", True, WHITE)
             title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 100))
             screen.blit(title_surface, title_rect)
 
             draw_buttons(mouse_pos)
-            # Handle lightning animation
             if lightning_timer <= 0:
-                if current_segment_index == 0:  # Generate new lightning path
+                if current_segment_index == 0: 
                     lightning_segments = generate_lightning()
                 draw_lightning()
 
@@ -200,7 +231,7 @@ def main():
             pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)
             back_text = button_font.render('Back',True,WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
-            sandbox(10)
+            grid_area(10,10,10)
             
 
         # Event handling

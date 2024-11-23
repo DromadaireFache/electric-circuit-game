@@ -28,8 +28,9 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
-button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
+title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
+general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button.png')
@@ -185,10 +186,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))
             
 
-        # Draw background and resistors
         draw_grid()
         for box in resistors:
-            screen.blit(Res100, (box.x, box.y))   
+            screen.blit(Res100, (box.x, box.y))       
         for bulb in bulbs:
             screen.blit(bulb_off, (bulb.x, bulb.y))
         for switch in switches:

@@ -155,6 +155,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     clock = pygame.time.Clock()
     while True:
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -177,8 +178,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             elif event.type == pygame.MOUSEMOTION and dragging:
                 # Update box position while dragging
                 if dragged_box:
-                    dragged_box.x = event.pos[0] + offset_x
-                    dragged_box.y = event.pos[1] + offset_y
+                    dragged_box.x = round((event.pos[0] + offset_x)/32)*32
+                    dragged_box.y = round((event.pos[1] + offset_y)/32)*32
                     # Keep box within screen bounds
                     dragged_box.x = max(0, min(SCREEN_WIDTH - BOX_WIDTH, dragged_box.x))
                     dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))

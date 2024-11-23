@@ -122,6 +122,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off.png'), def_img_size)
     bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on.png'), def_img_size)
     switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
+    bulb_off = pygame.image.load('images/lightbulb off/lightbulb off.png')
+    def_img_size = (32,32)
     Res100 = pygame.transform.scale(Res100, def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING

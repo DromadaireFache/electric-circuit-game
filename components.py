@@ -3,6 +3,8 @@ import numpy as np
 class Node:
     def __init__(self, components: list) -> None:
         self.components: list = components
+        self.current = 0
+        self.v_dir = {}
 
     def add(self, component):
         self.components.append(component)
@@ -13,18 +15,22 @@ class Node:
     
     def __str__(self):
         if len(self.components) == 0: return '[]'
-        string = '['
+        string = f'{self.current:.2f}A ['
         for component in self.components:
             string += str(component) + ', '
         return string[:-2] + ']'
+    
+    def __iter__(self):
+        return iter(self.components)
 
 class Component:
-    def __init__(self, pos=(0,0)) -> None:
+    def __init__(self, pos=(0,0), vertical = False) -> None:
         self.row, self.col = pos
-        self.in_node = False
+        self.vertical = vertical
+        self.in_node = 0
     
     def part_of(self, node: Node):
-        return self in node.components
+        return self in node
 
 class Wire(Component):
     def __init__(self, pos=(0, 0)) -> None:
@@ -34,7 +40,7 @@ class Wire(Component):
         return "Wire"
     
     def makenode(self, node: Node, map: list[list[None|Component]], ignore=(0,0)):
-        self.in_node = True
+        self.in_node = 1
         # node.add(self)
         rows = len(map)
         cols = len(map[0])
@@ -45,9 +51,13 @@ class Wire(Component):
             if type(self) is type(component):  #if its a wire continue to make node bigger
                 component.makenode(node, map, ignore=(1,0)) 
 
-            elif component != None: #if its another component just add it to node
-                component.in_node = True
+            elif component != None and component.vertical: #if its another component just add it to node
+                component.in_node += 1
                 node.add(component)
+                if type(component) is CurrentSource:
+                    node.current -= component.I
+                if type(component) is VoltageSource:
+                    node.v_dir[component] = np.sign(component.V)
         
         if self.row < rows and ignore[0] != 1: #add the one below
             component: Component = map[self.row+1][self.col]
@@ -55,9 +65,13 @@ class Wire(Component):
             if type(self) is type(component):
                 component.makenode(node, map, ignore=(-1,0))
 
-            elif component != None:
-                component.in_node = True
+            elif component != None and component.vertical:
+                component.in_node += 1
                 node.add(component)
+                if type(component) is CurrentSource:
+                    node.current += component.I
+                if type(component) is VoltageSource:
+                    node.v_dir[component] = -np.sign(component.V)
         
         if self.col > 0 and ignore[1] != -1: #add the one right
             component: Component = map[self.row][self.col-1]
@@ -65,9 +79,13 @@ class Wire(Component):
             if type(self) is type(component):
                 component.makenode(node, map, ignore=(0,1)) 
 
-            elif component != None:
-                component.in_node = True
+            elif component != None and not component.vertical:
+                component.in_node += 1
                 node.add(component)
+                if type(component) is CurrentSource:
+                    node.current += component.I
+                if type(component) is VoltageSource:
+                    node.v_dir[component] = np.sign(component.V)
         
         if self.col < cols and ignore[1] != 1: #add the one left
             component: Component = map[self.row][self.col+1]
@@ -75,66 +93,116 @@ class Wire(Component):
             if type(self) is type(component):
                 component.makenode(node, map, ignore=(0,-1))
 
-            elif component != None:
-                component.in_node = True
+            elif component != None and not component.vertical:
+                component.in_node += 1
                 node.add(component)
+                if type(component) is CurrentSource:
+                    node.current -= component.I
+                if type(component) is VoltageSource:
+                    node.v_dir[component] = -np.sign(component.V)
 
 class VoltageSource(Component):
     '''aka Battery'''
     UNITS = 'V'
-    def __init__(self, pos=(0, 0), volt=0) -> None:
-        super().__init__(pos)
+    def __init__(self, pos=(0, 0), vertical=False, volt=0) -> None:
+        super().__init__(pos, vertical)
         self.V = volt
+    
+    def __str__(self):
+        return f"VS. {self.V:.2f}{self.UNITS}"
 
 class CurrentSource(Component):
     UNITS = 'A'
-    def __init__(self, pos=(0, 0), current=0) -> None:
-        super().__init__(pos)
+    def __init__(self, pos=(0, 0), vertical=False, current=0) -> None:
+        super().__init__(pos, vertical)
         self.I = current
+
+    def __str__(self):
+        return f"CS. {self.I:.2f}{self.UNITS}"
 
 class Resistor(Component):
     UNITS = 'Ω'
-    def __init__(self, pos=(0, 0), res=0) -> None:
-        super().__init__(pos)
+    def __init__(self, pos=(0, 0), vertical=False, res=0, is_light=False) -> None:
+        super().__init__(pos, vertical)
         self.R = res
+        self.is_light = is_light
 
     def __str__(self):
-        return f"Res. {self.R}{Resistor.UNITS}"
-
-class Light(Component):
-    UNITS = 'W'
-    def __init__(self, pos=(0, 0), power=0) -> None:
-        super().__init__(pos)
-        self.P = power
+        return f"Light {self.R}{self.UNITS}" if self.is_light else f"Res. {self.R}{self.UNITS}"
+    
+    def W(self, I):
+        return I/self.R**2
 
 class Switch(Component):
-    def __init__(self, pos=(0, 0)) -> None:
-        super().__init__(pos)
+    def __init__(self, pos=(0, 0), vertical=False) -> None:
+        super().__init__(pos, vertical)
         self.closed = False
     
     def switch(self):
         self.closed = not self.closed
 
-# try:
-#     inverse_matrix = np.linalg.inv(matrix)
-#     print("Matrix:\n", matrix)
-#     print("Inverse Matrix:\n", inverse_matrix)
-# except np.linalg.LinAlgError:
-#     print("Matrix is singular and cannot be inverted.")
-
-def create_matrix(nodes: list[Node]):
+def res_matrix(nodes: list[Node]):
     #first wire made is ground, therefore does not go into matrix
-    G = np.zeros((len(nodes)-1, len(nodes)-1))
+    if len(nodes) < 2: return None
+    nodes = nodes[1:]
+    G = np.zeros((len(nodes), len(nodes)))
 
-    for i, node1 in enumerate(start=1):
-        for j, node2 in enumerate(start=1):
+    for i, node1 in enumerate(nodes):
+        for j, node2 in enumerate(nodes):
+            sum_ = 0
             if i == j:
-                pass
+                for component in node1:
+                    try:
+                        sum_ += 1 / component.R
+                    except:
+                        continue
+            else:
+                for component in node1:
+                    if component in node2:
+                        try:
+                            sum_ -= 1 / component.R
+                        except:
+                            continue
+            G[i,j] = sum_
+    
+    return G
+
+def current_vector(nodes: list[Node]):
+    nodes = nodes[1:]
+    i = np.zeros((len(nodes)))
+    for k, node in enumerate(nodes):
+        i[k] = node.current
+    return i
+
+def voltage_dir(nodes: list[Node], V_sources):
+    nodes = nodes[1:]
+    B = np.zeros((len(nodes), len(V_sources)))
+
+    for i, node in enumerate(nodes):
+        for j, v in enumerate(V_sources):
+            if v in node:
+                B[i, j] = node.v_dir[v]
+
+    return B
+
+def A_matrix(nodes: list[Node], v_sources):
+    B = voltage_dir(nodes, v_sources)
+    C = B.transpose()
+    D = np.zeros((len(v_sources),len(v_sources)))
+    return np.block([[G, B],[C,D]])
+
+def z_matrix(nodes: list[Node], v_sources: list[VoltageSource]):
+    i = current_vector(nodes)
+    e = np.zeros((len(v_sources)))
+    for k, v_source in enumerate(v_sources):
+        e[k] = abs(v_source.V)
+    
+    return np.concatenate((i,e), axis=0)
 
 class Grid:
     DISSIZE = 12
     def __init__(self, cols, rows) -> None:
-        self.map: list[list[None|Component|Wire]]= [[None for j in range(cols)] for i in range(rows)]
+        self.map: list[list[None|Component|Wire]] = [[None for j in range(cols)] for i in range(rows)]
         self.rows = rows
         self.cols = cols
     
@@ -161,41 +229,80 @@ class Grid:
         return string
     
     def find_nodes(self) -> list[Node]:
-        nodes = []
+        nodes: list[Node] = []
         for row in self.map:
             for component in row:
                 if component == None: continue #don't consider empty tiles
-                component.in_node = False
+                component.in_node = 0
         
         for row in self.map:
             for component in row:
-                if component == None or component.in_node: continue
+                if component == None or component.in_node != 0: continue
 
                 if isinstance(component, Wire):
                     nodes.append(Node([]))
                     component.makenode(nodes[-1], self.map)
+        
+        #TO REMOVE COMPONENTS NOT CONNECTED TWICE
+        # for i, node in enumerate(nodes):
+        #     for j, component in enumerate(node):
+        #         if component.in_node != 2:
+        #             nodes[i].components.pop(j)
 
         return nodes
-
-if __name__ == '__main__':
-    grid = Grid(10, 10)
     
-    grid.place(Resistor((5,4), 100))
-    grid.place(Resistor((5,6), 50))
-    grid.place(Resistor((3,4), 150))
-    grid.place(Resistor((3,2), 200))
+    def __iter__(self):
+        return iter(self.map)
+    
+    def V_sources(self):
+        V_sources_list = []
+        for row in self:
+            for component in row:
+                if type(component) is VoltageSource:
+                    V_sources_list.append(component)
+        return V_sources_list
+    
+if __name__ == '__main__':
+    grid = Grid(11, 11)
+    
+    grid.place(Resistor((3,2), True, res=1))
+    grid.place(Resistor((3,4), True, res=2))
+    grid.place(Resistor((5,4), True, res=3))
+    grid.place(Resistor((5,6), True, res=4, is_light=True))
+    grid.place(Resistor((4,7), res=5))
+    grid.place(Resistor((1,1), True, res=100))
+
+    grid.place(CurrentSource((3,1), True, current=1))
+    grid.place(VoltageSource((6,7), volt=-1))
+
+    grid.place(Wire((2,1)))
+    grid.place(Wire((4,1)))
     grid.place(Wire((4,4)))
     grid.place(Wire((4,5)))
     grid.place(Wire((4,6)))
     grid.place(Wire((6,4)))
     grid.place(Wire((6,5)))
     grid.place(Wire((6,6)))
-    
     grid.place(Wire((2,2)))
     grid.place(Wire((2,3)))
     grid.place(Wire((2,4)))
     grid.place(Wire((4,2)))
     grid.place(Wire((4,3)))
+    grid.place(Wire((4,8)))
+    grid.place(Wire((5,8)))
+    grid.place(Wire((6,8)))
     print(grid)
     nodes = grid.find_nodes()
     for node in nodes: print(node)
+
+    G = res_matrix(nodes)
+    # print(G)
+    # inv_G = np.linalg.inv(G)
+    # i = current_vector(nodes)
+    # print(i)
+    # print(inv_G @ i)
+
+    A = A_matrix(nodes, grid.V_sources())
+    z = z_matrix(nodes, grid.V_sources())
+    x = np.linalg.inv(A) @ z
+    print(x)

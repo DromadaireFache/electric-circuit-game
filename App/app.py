@@ -21,7 +21,7 @@ title_font = pygame.font.Font('Grand9K Pixel.ttf', 48)
 button_font = pygame.font.Font('Grand9K Pixel.ttf', 28)
 
 button_data = [
-    {"text": "Start Game", "rect": pygame.Rect(275, 200, 250, 60), "screen": "blue"},
+    {"text": "Sandbox", "rect": pygame.Rect(275, 200, 250, 60), "screen": "blue"},
     {"text": "Level Select", "rect": pygame.Rect(275, 280, 250, 60), "screen": "red"},
     {"text": "Encyclopedia", "rect": pygame.Rect(275, 360, 250, 60), "screen": "white"},
     {"text": "About the Devs", "rect": pygame.Rect(275, 440, 250, 60), "screen": "yellow"},
@@ -60,6 +60,15 @@ def draw_buttons(mouse_pos):
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
 
+def sandbox():
+    pass
+def level_mode():
+    pass
+def about_devs():
+    pass
+def encyclopedia():
+    pass
+
 def main():
     global lightning_timer
     current_screen = "title"
@@ -97,7 +106,16 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN and current_screen == "title":
                 for button in button_data:
                     if button["rect"].collidepoint(mouse_pos):
-                        current_screen = button["screen"]
+                        current_screen = button["text"]
+                        if current_screen == "Sandbox":
+                            sandbox()
+                        elif current_screen == "Level Select":
+                            level_mode()
+                        elif current_screen == 'Encyclopedia':
+                            encyclopedia()
+                        else:
+                            about_devs()
+
 
         pygame.display.flip()
 

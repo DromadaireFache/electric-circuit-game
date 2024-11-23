@@ -110,19 +110,29 @@ def draw_grid():
     screen.blit(bottom_ui, (256,672)) # Bottom
     screen.blit(grid, (256, 32))
 
-def sandbox(num_resistors):
+def grid_area(num_resistors, num_bulbs, num_switch):
     # Create resistor boxes along the bottom
+    components = []
     resistors = []
+    bulbs = []
+    switches = []
+    def_img_size = (32,32)
+    bulb_img_size = (48,48)
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
-    dummy_img_size = (64,64)
     def_img_size = (32,32)
     Res100 = pygame.transform.scale(Res100, def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
-        #resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
         resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
-
+    components.append(resistors)
+    for i in range(num_bulbs):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        bulbs.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(bulbs)
+    
+    
     # Variables to track dragging state
     dragging = False
     dragged_box = None
@@ -137,14 +147,15 @@ def sandbox(num_resistors):
                 sys.exit()
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for box in resistors:
-                    if box.collidepoint(event.pos):
-                        dragging = True
-                        dragged_box = box
-                        # Calculate offset between mouse and box corner
-                        offset_x = box.x - event.pos[0]
-                        offset_y = box.y - event.pos[1]
-                        break
+                for type in components:
+                    for box in type:
+                        if box.collidepoint(event.pos):
+                            dragging = True
+                            dragged_box = box
+                            # Calculate offset between mouse and box corner
+                            offset_x = box.x - event.pos[0]
+                            offset_y = box.y - event.pos[1]
+                            break
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging = False
@@ -163,6 +174,8 @@ def sandbox(num_resistors):
         draw_grid()
         for box in resistors:
             screen.blit(Res100, (box.x, box.y))   
+        for bulb in bulbs:
+            screen.blit(bulb_off, (bulb.x, bulb.y))
             pygame.draw.rect(screen, BLACK, box, 2)  
 
         pygame.display.flip()  # Update the screen
@@ -205,7 +218,7 @@ def main():
             pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)
             back_text = button_font.render('Back',True,WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
-            sandbox(10)
+            grid_area(10,10,10)
             
 
         # Event handling

@@ -39,10 +39,10 @@ general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
 button_image = pygame.image.load('images/ui/button_new.png')
 button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_data = [
-   {"text": "Sandbox", "rect": pygame.Rect(451, 200, 250, 60), "screen": "sandbox"},
-   {"text": "Level Select", "rect": pygame.Rect(451, 280, 250, 60), "screen": "levels"},
-   {"text": "Encyclopedia", "rect": pygame.Rect(451, 360, 250, 60), "screen": "white"},
-   {"text": "About the Devs", "rect": pygame.Rect(451, 440, 250, 60), "screen": "yellow"},
+   {"text": "Sandbox", "rect": pygame.Rect(451, 250, 250, 60), "screen": "sandbox"},
+   {"text": "Level Select", "rect": pygame.Rect(451, 350, 250, 60), "screen": "levels"},
+   {"text": "Encyclopedia", "rect": pygame.Rect(451, 450, 250, 60), "screen": "white"},
+   {"text": "About the Devs", "rect": pygame.Rect(451, 550, 250, 60), "screen": "yellow"},
 ]
 
 # Lightning parameters

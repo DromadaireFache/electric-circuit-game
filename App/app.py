@@ -32,6 +32,7 @@ title_font = pygame.font.Font(None, 72)
 button_font = pygame.font.Font(None, 48)
 
 # Button data for the title screen
+button_image = pygame.image.load('images/ui/button.png')
 button_data = [
     {"text": "Sandbox", "rect": pygame.Rect(451, 200, 250, 60), "screen": "sandbox"},
     {"text": "Level Select", "rect": pygame.Rect(451, 280, 250, 60), "screen": "levels"},

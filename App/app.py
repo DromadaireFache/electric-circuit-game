@@ -80,11 +80,11 @@ def draw_buttons(mouse_pos):
 
 def draw_grid():
     """Draw a 20x20 grid."""
-    row_size = 36
-    column_size = 25
-    for x in range(0, SCREEN_WIDTH, SCREEN_WIDTH // row_size):
+    nbr_row = 36
+    nbr_column = 25
+    for x in range(0, SCREEN_WIDTH, SCREEN_WIDTH // nbr_row):
         pygame.draw.line(screen, BLACK, (x, 0), (x, SCREEN_HEIGHT))
-    for y in range(0, SCREEN_HEIGHT, SCREEN_HEIGHT // column_size):
+    for y in range(0, SCREEN_HEIGHT, SCREEN_HEIGHT // nbr_column):
         pygame.draw.line(screen, BLACK, (0, y), (SCREEN_WIDTH, y))
     pygame.draw.rect(screen, BLACK, pygame.Rect(0, 0, 256, 800))
     pygame.draw.rect(screen, BLACK, pygame.Rect(256, 0, 640, 32))

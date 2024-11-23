@@ -27,6 +27,8 @@ button_data = [
     {"text": "About the Devs", "rect": pygame.Rect(275, 440, 250, 60), "screen": "yellow"},
 ]
 
+level_buttons = [pygame.Rect(100 + i % 3 * 200, 150 + i // 3 * 200, 150, 150) for i in range(6)]
+
 lightning_timer = 0
 lightning_duration = 30 
 lightning_strike_interval = 100 
@@ -100,12 +102,18 @@ def main():
         pygame.display.flip()
 
 class Level:
-    def __init__(self, inst = "", res = 0, Amp = 0,):
-        level_def = {}
-        level_def[self.instructions] = inst
-        level_def[self.voltage] = Amp
-        level_def[self.allowed_res] = res
-         
+    def __init__(self, description: dict):
+        self.title = description['title']
+        self.inst = description['instruction']
+
+    def generate_level(self):
+        pass 
 
 if __name__ == "__main__":
     main()
+    levels = [
+        Level({
+            'title': 'Level 1: Tutorial',
+            'instruction': 'In this level, ...'
+        })
+    ]

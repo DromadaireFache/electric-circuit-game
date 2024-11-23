@@ -44,7 +44,7 @@ def sandbox(res, BUTTON_COLOR, button_font):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    for num,res in enumerate(resistor):
+                    for num,res in enumerate(resistors):
                         if res.collidepoint(event.pos):
                             active_res = num
 

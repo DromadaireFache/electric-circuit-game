@@ -131,7 +131,7 @@ def main():
                 lightning_timer -= 1
 
         elif current_screen == "sandbox":
-            functions.sandbox(10, BUTTON_COLOR, button_font)
+            functions.sandbox(2, BUTTON_COLOR, button_font)
             
 
         # Event handling

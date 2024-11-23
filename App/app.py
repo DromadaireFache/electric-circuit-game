@@ -117,10 +117,11 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     bulbs = []
     switches = []
     def_img_size = (32,32)
-    bulb_img_size = (48,48)
+    bulb_img_size = (60,60)
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
-    bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off.png'), bulb_img_size)
-    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on.png'), bulb_img_size)
+    bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off.png'), def_img_size)
+    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on.png'), def_img_size)
+    switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
     Res100 = pygame.transform.scale(Res100, def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
@@ -132,6 +133,11 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         bulbs.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
     components.append(bulbs)
+    for i in range(num_switch):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        switches.append(pygame.Rect(x+200, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(switches)
     
     
     # Variables to track dragging state
@@ -177,7 +183,11 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(Res100, (box.x, box.y))   
         for bulb in bulbs:
             screen.blit(bulb_off, (bulb.x, bulb.y))
-            pygame.draw.rect(screen, BLACK, box, 2)  
+            pygame.draw.rect(screen, BLACK, box, 2)
+        for switch in switches:
+            screen.blit(switch_off, (bulb.x, bulb.y))
+            pygame.draw.rect(screen, BLACK, box, 2)
+
 
         pygame.display.flip()  # Update the screen
         

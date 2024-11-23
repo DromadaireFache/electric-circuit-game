@@ -1,7 +1,7 @@
 import pygame
 import sys
 import random
-import functions
+from functions import *
 from components import *
 
 # Initialize Pygame

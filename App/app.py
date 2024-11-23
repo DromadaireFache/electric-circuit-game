@@ -36,12 +36,13 @@ button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
 general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
 
 # Button data for the title screen
-button_image = pygame.image.load('images/ui/button.png')
+button_image = pygame.image.load('images/ui/button_new.png')
+button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_data = [
-    {"text": "Sandbox", "rect": pygame.Rect(451, 200, 250, 60), "screen": "sandbox"},
-    {"text": "Level Select", "rect": pygame.Rect(451, 280, 250, 60), "screen": "levels"},
-    {"text": "Encyclopedia", "rect": pygame.Rect(451, 360, 250, 60), "screen": "white"},
-    {"text": "About the Devs", "rect": pygame.Rect(451, 440, 250, 60), "screen": "yellow"},
+   {"text": "Sandbox", "rect": pygame.Rect(451, 200, 250, 60), "screen": "sandbox"},
+   {"text": "Level Select", "rect": pygame.Rect(451, 280, 250, 60), "screen": "levels"},
+   {"text": "Encyclopedia", "rect": pygame.Rect(451, 360, 250, 60), "screen": "white"},
+   {"text": "About the Devs", "rect": pygame.Rect(451, 440, 250, 60), "screen": "yellow"},
 ]
 
 # Lightning parameters
@@ -85,12 +86,13 @@ def draw_lightning():
     for i in range(current_segment_index):
         pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 6)
 
-
 def draw_buttons(mouse_pos):
     for button in button_data:
         rect = button["rect"]
-        color = BUTTON_HOVER_COLOR if rect.collidepoint(mouse_pos) else BUTTON_COLOR
-        pygame.draw.rect(screen, color, rect, border_radius=10)
+        if rect.collidepoint(mouse_pos):
+            screen.blit(button_hover_image, rect)
+        else:
+            screen.blit(button_image, rect)
         text_surface = button_font.render(button["text"], True, WHITE)
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)

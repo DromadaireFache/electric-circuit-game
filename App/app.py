@@ -19,7 +19,7 @@ BUTTON_HOVER_COLOR = (0, 150, 250)
 LIGHTNING_COLOR = (255, 255, 0)  # Yellow lightning
 
 #Stuff Relating to Drag Mechanic
-BOX_WIDTH, BOX_HEIGHT = 80, 80
+BOX_WIDTH, BOX_HEIGHT = 30, 30
 BOX_SPACING = 20
 num_boxes = 5
 
@@ -112,8 +112,10 @@ def draw_grid():
 def sandbox(num_resistors):
     # Create resistor boxes along the bottom
     resistors = []
+    Res100 = pygame.image.load('images/resistors/resistor 100.png')
+    def_img_size = (32,32)
     for i in range(num_resistors):
-        x = i * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
 

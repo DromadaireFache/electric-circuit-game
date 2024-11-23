@@ -33,33 +33,39 @@ class Component:
         return self in node
 
 class Wire(Component):
-    def __init__(self, pos=(0, 0)) -> None:
-        super().__init__(pos)
+    UNITS = 'A'
+    def __init__(self, pos=(0, 0), vertical=False, is_ameter=False) -> None:
+        super().__init__(pos, vertical)
+        self.is_ameter = is_ameter
+        if is_ameter:
+            self.current = 0
 
     def __str__(self):
-        return "Wire"
+        return f"AM {self.current:.2f}{self.UNITS}" if self.is_ameter else "Wire"
     
     def makenode(self, node: Node, map: list[list[None|Component]], ignore=(0,0)):
         self.in_node = 1
-        # node.add(self)
+        node.add(self)
         rows = len(map)
         cols = len(map[0])
 
-        if self.row > 0 and ignore[0] != -1: #add the one above
+        if self.row > 0 and ignore[0] != -1 and not (self.is_ameter and not self.vertical): #add the one above
             component: Component = map[self.row-1][self.col]
             # print(component)
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                component.makenode(node, map, ignore=(1,0)) 
+                component.makenode(node, map, ignore=(1,0))
 
             elif component != None and component.vertical: #if its another component just add it to node
                 component.in_node += 1
                 node.add(component)
                 if type(component) is CurrentSource:
                     node.current -= component.I
-                if type(component) is VoltageSource:
+                elif type(component) is VoltageSource:
                     node.v_dir[component] = np.sign(component.V)
+                if type(component) is Voltmeter:
+                    node.v_dir[component] = -1
         
-        if self.row < rows and ignore[0] != 1: #add the one below
+        if self.row < rows and ignore[0] != 1 and not (self.is_ameter and not self.vertical): #add the one below
             component: Component = map[self.row+1][self.col]
             # print(component)
             if type(self) is type(component):
@@ -70,7 +76,7 @@ class Wire(Component):
                 node.add(component)
                 if type(component) is CurrentSource:
                     node.current += component.I
-                if type(component) is VoltageSource:
+                elif type(component) is VoltageSource:
                     node.v_dir[component] = -np.sign(component.V)
         
         if self.col > 0 and ignore[1] != -1: #add the one right
@@ -87,8 +93,8 @@ class Wire(Component):
                 if type(component) is VoltageSource:
                     node.v_dir[component] = np.sign(component.V)
         
-        if self.col < cols and ignore[1] != 1: #add the one left
-            component: Component = map[self.row][self.col+1]
+        if self.col < cols and ignore[1] != 1 and not (self.is_ameter and self.vertical): #add the one left
+            component: Component = map[self.row][self.col-1]
             # print(component)
             if type(self) is type(component):
                 component.makenode(node, map, ignore=(0,-1))
@@ -110,6 +116,10 @@ class VoltageSource(Component):
     
     def __str__(self):
         return f"VS. {self.V:.2f}{self.UNITS}"
+    
+    def get_current(self, nodes: list[Node], grid, my_node_index: int, x, ignore=(0,0)):
+        index = grid.V_sources().index(self)
+        return self.V / x[len(nodes)+index]
 
 class CurrentSource(Component):
     UNITS = 'A'
@@ -119,6 +129,9 @@ class CurrentSource(Component):
 
     def __str__(self):
         return f"CS. {self.I:.2f}{self.UNITS}"
+    
+    def get_current(self, nodes: list[Node], grid, my_node_index: int, x, ignore=(0,0)):
+        return self.I
 
 class Resistor(Component):
     UNITS = 'Ω'
@@ -132,6 +145,18 @@ class Resistor(Component):
     
     def W(self, I):
         return I/self.R**2
+    
+    def get_current(self, nodes: list[Node], grid, my_node_index: int, x, ignore=(0,0)):
+        if my_node_index == 0:
+            my_voltage = 0
+        else:
+            my_voltage = x[my_node_index-1]
+        
+        for i, node in enumerate(nodes):
+            if node != nodes[my_node_index] and self in node:
+                if i == 0:
+                    return - x[my_node_index] / self.R
+                return (x[i-1] - my_voltage) / self.R
 
 class Switch(Component):
     def __init__(self, pos=(0, 0), vertical=False) -> None:
@@ -186,6 +211,7 @@ def voltage_dir(nodes: list[Node], V_sources):
     return B
 
 def A_matrix(nodes: list[Node], v_sources):
+    G = G_matrix(nodes)
     B = voltage_dir(nodes, v_sources)
     C = B.transpose()
     D = np.zeros((len(v_sources),len(v_sources)))
@@ -243,11 +269,13 @@ class Grid:
                     nodes.append(Node([]))
                     component.makenode(nodes[-1], self.map)
         
-        #TO REMOVE COMPONENTS NOT CONNECTED TWICE
-        # for i, node in enumerate(nodes):
-        #     for j, component in enumerate(node):
-        #         if component.in_node != 2:
-        #             nodes[i].components.pop(j)
+        # TO REMOVE COMPONENTS NOT CONNECTED TWICE
+        for i, node in enumerate(nodes):
+            for j, component in enumerate(node):
+                if component.in_node != 2:
+                    nodes[i].components.pop(j)
+            if len(nodes[i].components) == 0:
+                nodes.pop(i)
 
         return nodes
     
@@ -261,6 +289,13 @@ class Grid:
                 if type(component) is VoltageSource:
                     V_sources_list.append(component)
         return V_sources_list
+    
+    def get_currents(self, nodes:list[Node]):
+        x = x_matrix(nodes, self.V_sources())
+        for i, node in enumerate(nodes):
+            for component in node.components:
+                if type(component) is Wire and component.is_ameter:
+                    component.get_current(nodes, self, i, x)
     
 if __name__ == '__main__':
     grid = Grid(11, 11)
@@ -281,10 +316,10 @@ if __name__ == '__main__':
     grid.place(Wire((4,5)))
     grid.place(Wire((4,6)))
     grid.place(Wire((6,4)))
-    grid.place(Wire((6,5)))
+    grid.place(Wire((6,5), False, is_ameter=True))
     grid.place(Wire((6,6)))
     grid.place(Wire((2,2)))
-    grid.place(Wire((2,3)))
+    grid.place(Wire((2,3), False, is_ameter=True))
     grid.place(Wire((2,4)))
     grid.place(Wire((4,2)))
     grid.place(Wire((4,3)))
@@ -293,16 +328,15 @@ if __name__ == '__main__':
     grid.place(Wire((6,8)))
     print(grid)
     nodes = grid.find_nodes()
+    grid.get_currents(nodes)
+    print(grid)
     for node in nodes: print(node)
 
-    G = res_matrix(nodes)
+    # G = G_matrix(nodes)
     # print(G)
     # inv_G = np.linalg.inv(G)
     # i = current_vector(nodes)
     # print(i)
     # print(inv_G @ i)
 
-    A = A_matrix(nodes, grid.V_sources())
-    z = z_matrix(nodes, grid.V_sources())
-    x = np.linalg.inv(A) @ z
-    print(x)
+    print(x_matrix(nodes, grid.V_sources()))

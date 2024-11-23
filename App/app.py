@@ -1,6 +1,9 @@
 import pygame
 import sys
 import random
+import openai
+
+openai.api_key="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"
 
 pygame.init()
 
@@ -100,7 +103,7 @@ def main():
 class Level:
     def __init__(self, inst = ""):
         self.instructions = inst
-        pass
+        
 
 if __name__ == "__main__":
     main()

@@ -38,6 +38,7 @@ class Wire(Component):
         super().__init__(pos, vertical)
         self.is_ameter = is_ameter
         self.is_switch = is_switch
+        self.has_dir = is_ameter or is_switch
         if is_ameter:
             self.current = 0
         self.closed = False
@@ -55,7 +56,7 @@ class Wire(Component):
         rows = len(map)
         cols = len(map[0])
 
-        if self.row > 0 and ignore[0] != -1 and not (self.is_ameter and not self.vertical): #add the one above
+        if self.row > 0 and ignore[0] != -1 and not (self.has_dir and not self.vertical): #add the one above
             component: Component = map[self.row-1][self.col]
             # print(component)
             if type(self) is type(component) and not (self.is_switch and not self.closed):  #if its a wire continue to make node bigger
@@ -69,7 +70,7 @@ class Wire(Component):
                 elif type(component) is VoltageSource:
                     node.v_dir[component] = np.sign(component.V)
         
-        if self.row < rows and ignore[0] != 1 and not (self.is_ameter and not self.vertical): #add the one below
+        if self.row < rows and ignore[0] != 1 and not (self.has_dir and not self.vertical): #add the one below
             component: Component = map[self.row+1][self.col]
             # print(component)
             if type(self) is type(component) and not (self.is_switch and not self.closed):
@@ -83,7 +84,7 @@ class Wire(Component):
                 elif type(component) is VoltageSource:
                     node.v_dir[component] = -np.sign(component.V)
         
-        if self.col > 0 and ignore[1] != -1 and not (self.is_ameter and self.vertical): #add the one right
+        if self.col > 0 and ignore[1] != -1 and not (self.has_dir and self.vertical): #add the one right
             component: Component = map[self.row][self.col+1]
             # print(component)
             if type(self) is type(component) and not (self.is_switch and not self.closed):
@@ -97,7 +98,7 @@ class Wire(Component):
                 elif type(component) is VoltageSource:
                     node.v_dir[component] = -np.sign(component.V)
         
-        if self.col < cols and ignore[1] != 1 and not (self.is_ameter and self.vertical): #add the one left
+        if self.col < cols and ignore[1] != 1 and not (self.has_dir and self.vertical): #add the one left
             component: Component = map[self.row][self.col-1]
             # print(component)
             if type(self) is type(component) and not (self.is_switch and not self.closed):
@@ -117,7 +118,7 @@ class Wire(Component):
         cols = len(map[0])
         current = 0
 
-        if self.row > 0 and ignore[0] != -1 and not (self.is_ameter and not self.vertical) \
+        if self.row > 0 and ignore[0] != -1 and not (self.has_dir and not self.vertical) \
             and not (self.is_switch and not self.closed) and not ignore == (0,0): #add the one above
             component: Component = map[self.row-1][self.col]
             try:
@@ -125,7 +126,7 @@ class Wire(Component):
             except:
                 pass
         
-        if self.row < rows and ignore[0] != 1 and not (self.is_ameter and not self.vertical) \
+        if self.row < rows and ignore[0] != 1 and not (self.has_dir and not self.vertical) \
             and not (self.is_switch and not self.closed): #add the one below
             component: Component = map[self.row+1][self.col]
             try:
@@ -133,7 +134,7 @@ class Wire(Component):
             except:
                 pass
         
-        if self.col > 0 and ignore[1] != -1 and not (self.is_ameter and self.vertical) \
+        if self.col > 0 and ignore[1] != -1 and not (self.has_dir and self.vertical) \
             and not (self.is_switch and not self.closed) and not ignore == (0,0): #add the one right
             component: Component = map[self.row][self.col-1]
             try:
@@ -141,7 +142,7 @@ class Wire(Component):
             except:
                 pass
         
-        if self.col < cols and ignore[1] != 1 and not (self.is_ameter and self.vertical) \
+        if self.col < cols and ignore[1] != 1 and not (self.has_dir and self.vertical) \
             and not (self.is_switch and not self.closed): #add the one left
             component: Component = map[self.row][self.col+1]
             try:

@@ -87,7 +87,8 @@ def draw_grid():
     for y in range(0, SCREEN_HEIGHT, SCREEN_HEIGHT // nbr_column):
         pygame.draw.line(screen, BLACK, (0, y), (SCREEN_WIDTH, y))
     pygame.draw.rect(screen, BLACK, pygame.Rect(0, 0, 256, 800))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(256, 0, 640, 32))
+    top_ui = pygame.image.load('images/ui/top ui.png')
+    screen.blit(top_ui, (256,0))
     pygame.draw.rect(screen, BLACK,pygame.Rect(896, 0, 256, 800))
     pygame.draw.rect(screen, BLACK,pygame.Rect(256, 672, 640, 128))
 

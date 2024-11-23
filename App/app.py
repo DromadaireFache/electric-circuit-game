@@ -17,7 +17,6 @@ BUTTON_COLOR = (0, 100, 200)
 BUTTON_HOVER_COLOR = (0, 150, 250)
 LIGHTNING_COLOR = (255, 255, 0)  
 
-# Fonts
 title_font = pygame.font.Font('Grand9K Pixel.ttf', 48)
 button_font = pygame.font.Font('Grand9K Pixel.ttf', 28)
 
@@ -27,6 +26,8 @@ button_data = [
     {"text": "Encyclopedia", "rect": pygame.Rect(275, 360, 250, 60), "screen": "white"},
     {"text": "About the Devs", "rect": pygame.Rect(275, 440, 250, 60), "screen": "yellow"},
 ]
+
+level_buttons = [pygame.Rect(100 + i % 3 * 200, 150 + i // 3 * 200, 150, 150) for i in range(6)]
 
 lightning_timer = 0
 lightning_duration = 30 
@@ -101,9 +102,18 @@ def main():
         pygame.display.flip()
 
 class Level:
-    def __init__(self, inst = ""):
-        self.instructions = inst
-        
+    def __init__(self, description: dict):
+        self.title = description['title']
+        self.inst = description['instruction']
+
+    def generate_level(self):
+        pass 
 
 if __name__ == "__main__":
     main()
+    levels = [
+        Level({
+            'title': 'Level 1: Tutorial',
+            'instruction': 'In this level, ...'
+        })
+    ]

@@ -17,7 +17,6 @@ BUTTON_COLOR = (0, 100, 200)
 BUTTON_HOVER_COLOR = (0, 150, 250)
 LIGHTNING_COLOR = (255, 255, 0)  
 
-# Fonts
 title_font = pygame.font.Font('Grand9K Pixel.ttf', 48)
 button_font = pygame.font.Font('Grand9K Pixel.ttf', 28)
 
@@ -101,9 +100,12 @@ def main():
         pygame.display.flip()
 
 class Level:
-    def __init__(self, inst = ""):
-        self.instructions = inst
-        
+    def __init__(self, inst = "", res = 0, Amp = 0,):
+        level_def = {}
+        level_def[self.instructions] = inst
+        level_def[self.voltage] = Amp
+        level_def[self.allowed_res] = res
+         
 
 if __name__ == "__main__":
     main()

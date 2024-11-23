@@ -1,12 +1,12 @@
 import pygame
 import sys
 import random
+from functions import *
 from components import *
 
 # Initialize Pygame
 pygame.init()
-grid = Grid(20,20)
-
+grid = Grid(20, 20)
 
 # Screen setup
 SCREEN_WIDTH, SCREEN_HEIGHT = 1152, 800
@@ -36,12 +36,13 @@ button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
 general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
 
 # Button data for the title screen
-button_image = pygame.image.load('images/ui/button.png')
+button_image = pygame.image.load('images/ui/button_new.png')
+button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_data = [
-    {"text": "Sandbox", "rect": pygame.Rect(451, 200, 250, 60), "screen": "sandbox"},
-    {"text": "Level Select", "rect": pygame.Rect(451, 280, 250, 60), "screen": "levels"},
-    {"text": "Encyclopedia", "rect": pygame.Rect(451, 360, 250, 60), "screen": "white"},
-    {"text": "About the Devs", "rect": pygame.Rect(451, 440, 250, 60), "screen": "yellow"},
+   {"text": "Sandbox", "rect": pygame.Rect(451, 200, 250, 60), "screen": "sandbox"},
+   {"text": "Level Select", "rect": pygame.Rect(451, 280, 250, 60), "screen": "levels"},
+   {"text": "Encyclopedia", "rect": pygame.Rect(451, 360, 250, 60), "screen": "white"},
+   {"text": "About the Devs", "rect": pygame.Rect(451, 440, 250, 60), "screen": "yellow"},
 ]
 
 # Lightning parameters
@@ -85,12 +86,13 @@ def draw_lightning():
     for i in range(current_segment_index):
         pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 6)
 
-
 def draw_buttons(mouse_pos):
     for button in button_data:
         rect = button["rect"]
-        color = BUTTON_HOVER_COLOR if rect.collidepoint(mouse_pos) else BUTTON_COLOR
-        pygame.draw.rect(screen, color, rect, border_radius=10)
+        if rect.collidepoint(mouse_pos):
+            screen.blit(button_hover_image, rect)
+        else:
+            screen.blit(button_image, rect)
         text_surface = button_font.render(button["text"], True, WHITE)
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
@@ -132,29 +134,32 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        resistor_position = (x,y)
         resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
     components.append(resistors)
     for i in range(num_bulbs):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        bulb_position = (x,y)
         bulbs.append(pygame.Rect(x+50, y  , BOX_WIDTH, BOX_HEIGHT))
     components.append(bulbs)
     for i in range(num_switch):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         switches.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
+        switch_position = (x,y)
     components.append(switches)
     for i in range(200):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         wires.append(pygame.Rect(x+150, y, BOX_WIDTH, BOX_HEIGHT))
+        wire_position = (x,y)
     components.append(wires)
     
     # Variables to track dragging state
     dragging = False
     dragged_box = None
     offset_x, offset_y = 0, 0
-
     # Main loop for the sandbox
     clock = pygame.time.Clock()
     while True:
@@ -192,9 +197,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     grid.place(dragged_object)
                     print(grid.map[dragged_object.row][dragged_object.col])
                 dragging = False
-                dragged_box = None
-                
-            
+                dragged_box = 0
             elif event.type == pygame.MOUSEMOTION and dragging:
                 # Update box position while dragging
                 if dragged_box:

@@ -35,7 +35,6 @@ class Component:
 class Wire(Component):
     def __init__(self, pos=(0, 0)) -> None:
         super().__init__(pos)
-
     def __str__(self):
         return "Wire"
     
@@ -58,6 +57,8 @@ class Wire(Component):
                     node.current -= component.I
                 if type(component) is VoltageSource:
                     node.v_dir[component] = np.sign(component.V)
+                if type(component) is Voltmeter:
+                    node.v_dir[component] = -1
         
         if self.row < rows and ignore[0] != 1: #add the one below
             component: Component = map[self.row+1][self.col]
@@ -72,7 +73,9 @@ class Wire(Component):
                     node.current += component.I
                 if type(component) is VoltageSource:
                     node.v_dir[component] = -np.sign(component.V)
-        
+                if type(component) is Voltmeter:
+                    node.v_dir[component] = 1
+
         if self.col > 0 and ignore[1] != -1: #add the one right
             component: Component = map[self.row][self.col-1]
             # print(component)
@@ -86,6 +89,8 @@ class Wire(Component):
                     node.current += component.I
                 if type(component) is VoltageSource:
                     node.v_dir[component] = np.sign(component.V)
+                if type(component) is Voltmeter:
+                    node.v_dir[component] = -1
         
         if self.col < cols and ignore[1] != 1: #add the one left
             component: Component = map[self.row][self.col+1]
@@ -100,6 +105,9 @@ class Wire(Component):
                     node.current -= component.I
                 if type(component) is VoltageSource:
                     node.v_dir[component] = -np.sign(component.V)
+                if type(component) is Voltmeter:
+                    node.v_dir[component] = 1
+
 
 class VoltageSource(Component):
     '''aka Battery'''
@@ -140,6 +148,25 @@ class Switch(Component):
     
     def switch(self):
         self.closed = not self.closed
+
+class Voltmeter(Component):
+    UNITS = 'V'
+    def __init__(self, pos=(0, 0), vertical=False) -> None:
+        super().__init__(pos, vertical)
+
+    def __str__(self):
+        return f"VM. {self.UNITS}"
+
+    def Voltmeter_value(nodes: list[Node]):
+        volt_diff = 0
+        for i, node1 in enumerate(nodes[1:]):
+            for component in node1:
+                if type(component)==Voltmeter:
+                    try:
+                        volt_diff += x[i-1]*component.v_dir
+                    except:
+                        continue
+
 
 def res_matrix(nodes: list[Node]):
     #first wire made is ground, therefore does not go into matrix
@@ -199,6 +226,7 @@ def z_matrix(nodes: list[Node], v_sources: list[VoltageSource]):
     
     return np.concatenate((i,e), axis=0)
 
+
 class Grid:
     DISSIZE = 12
     def __init__(self, cols, rows) -> None:
@@ -243,11 +271,13 @@ class Grid:
                     nodes.append(Node([]))
                     component.makenode(nodes[-1], self.map)
         
-        #TO REMOVE COMPONENTS NOT CONNECTED TWICE
-        # for i, node in enumerate(nodes):
-        #     for j, component in enumerate(node):
-        #         if component.in_node != 2:
-        #             nodes[i].components.pop(j)
+        # TO REMOVE COMPONENTS NOT CONNECTED TWICE
+        for i, node in enumerate(nodes):
+            for j, component in enumerate(node):
+                if component.in_node != 2:
+                    nodes[i].components.pop(j)
+            if len(nodes[i].components) == 0:
+                nodes.pop(i)
 
         return nodes
     
@@ -291,6 +321,10 @@ if __name__ == '__main__':
     grid.place(Wire((4,8)))
     grid.place(Wire((5,8)))
     grid.place(Wire((6,8)))
+    grid.place(Wire((3,4)))
+    grid.place(Wire((2,7)))
+
+    grid.place(Voltmeter((2,6)))
     print(grid)
     nodes = grid.find_nodes()
     for node in nodes: print(node)

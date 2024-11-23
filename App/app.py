@@ -1,7 +1,6 @@
 import pygame
 import sys
 import random
-import functions
 
 
 # Initialize Pygame
@@ -15,9 +14,19 @@ pygame.display.set_caption("Lights Out with Lightning Animation")
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (200, 50, 50)
 BUTTON_COLOR = (0, 100, 200)
 BUTTON_HOVER_COLOR = (0, 150, 250)
 LIGHTNING_COLOR = (255, 255, 0)  # Yellow lightning
+
+#Stuff Relating to Drag Mechanic
+BOX_WIDTH, BOX_HEIGHT = 80, 80
+BOX_SPACING = 20
+num_boxes = 5
+
+dragging = False
+dragged_box = None
+offset_x, offset_y = 0, 0
 
 # Fonts
 title_font = pygame.font.Font(None, 72)
@@ -99,6 +108,60 @@ def draw_grid():
     screen.blit(top_ui, (256,0)) # Top
     screen.blit(bottom_ui, (256,672)) # Bottom
 
+def sandbox(num_resistors):
+    # Create resistor boxes along the bottom
+    resistors = []
+    for i in range(num_resistors):
+        x = i * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
+
+    # Variables to track dragging state
+    dragging = False
+    dragged_box = None
+    offset_x, offset_y = 0, 0
+
+    # Main loop for the sandbox
+    clock = pygame.time.Clock()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for box in resistors:
+                    if box.collidepoint(event.pos):
+                        dragging = True
+                        dragged_box = box
+                        # Calculate offset between mouse and box corner
+                        offset_x = box.x - event.pos[0]
+                        offset_y = box.y - event.pos[1]
+                        break
+            
+            elif event.type == pygame.MOUSEBUTTONUP:
+                dragging = False
+                dragged_box = None
+            
+            elif event.type == pygame.MOUSEMOTION and dragging:
+                # Update box position while dragging
+                if dragged_box:
+                    dragged_box.x = event.pos[0] + offset_x
+                    dragged_box.y = event.pos[1] + offset_y
+                    # Keep box within screen bounds
+                    dragged_box.x = max(0, min(SCREEN_WIDTH - BOX_WIDTH, dragged_box.x))
+                    dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))
+
+        # Draw background and resistors
+        draw_grid()
+        for box in resistors:
+            pygame.draw.rect(screen, RED, box)
+            pygame.draw.rect(screen, BLACK, box, 2)  # Border for clarity
+
+        pygame.display.flip()  # Update the screen
+        clock.tick(60)  # Limit to 60 FPS
+        
+
 
 def main():
     global lightning_segments, current_segment_index, lightning_timer, strike_from_left
@@ -131,7 +194,12 @@ def main():
                 lightning_timer -= 1
 
         elif current_screen == "sandbox":
-            functions.sandbox(2, BUTTON_COLOR, button_font)
+            draw_grid()
+            back_button = pygame.Rect(20,20,100,50)
+            pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)
+            back_text = button_font.render('Back',True,WHITE)
+            screen.blit(back_text, back_text.get_rect(center=back_button.center))
+            sandbox(10)
             
 
         # Event handling

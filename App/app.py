@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 
+
 # Initialize Pygame
 pygame.init()
 
@@ -38,8 +39,11 @@ strike_from_left = True  # Alternates between left and right
 
 
 def generate_lightning():
-    """Generates lightning points targeting the title's center while avoiding buttons."""
-    start_x = 0 if strike_from_left else SCREEN_WIDTH  # Left or right
+    if strike_from_left:
+        start_x = 0   
+    else:
+        start_x = SCREEN_WIDTH
+    
     end_x, end_y = SCREEN_WIDTH // 2, 100  # Title position
 
     points = [(start_x, random.randint(50, SCREEN_HEIGHT - 50))]  # Random starting Y position
@@ -130,6 +134,7 @@ def main():
             pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)
             back_text = button_font.render("Back", True, WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
+            
 
         # Event handling
         for event in pygame.event.get():

@@ -114,9 +114,11 @@ def sandbox(num_resistors):
     resistors = []
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
     def_img_size = (32,32)
+    Res100 = pygame.transform.scale(Res100, def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        #resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
         resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
 
     # Variables to track dragging state
@@ -158,11 +160,10 @@ def sandbox(num_resistors):
         # Draw background and resistors
         draw_grid()
         for box in resistors:
-            pygame.draw.rect(screen, RED, box)
-            pygame.draw.rect(screen, BLACK, box, 2)  # Border for clarity
+            screen.blit(Res100, (box.x, box.y))   
+            pygame.draw.rect(screen, BLACK, box, 2)  
 
         pygame.display.flip()  # Update the screen
-        clock.tick(60)  # Limit to 60 FPS
         
 
 

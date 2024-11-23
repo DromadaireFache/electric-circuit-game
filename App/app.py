@@ -28,8 +28,8 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font(None, 72)
-button_font = pygame.font.Font(None, 48)
+title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button.png')
@@ -112,6 +112,7 @@ def draw_grid():
 
 def grid_area(num_resistors, num_bulbs, num_switch):
     # Create resistor boxes along the bottom
+    wires = []
     components = []
     resistors = []
     bulbs = []
@@ -119,12 +120,11 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     def_img_size = (32,32)
     bulb_img_size = (60,60)
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
-    bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off.png'), def_img_size)
-    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on.png'), def_img_size)
-    switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
-    bulb_off = pygame.image.load('images/lightbulb off/lightbulb off.png')
-    def_img_size = (32,32)
     Res100 = pygame.transform.scale(Res100, def_img_size)
+    bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
+    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
+    switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
+    wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
@@ -133,14 +133,18 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     for i in range(num_bulbs):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
-        bulbs.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
+        bulbs.append(pygame.Rect(x+50, y  , BOX_WIDTH, BOX_HEIGHT))
     components.append(bulbs)
     for i in range(num_switch):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
-        switches.append(pygame.Rect(x+200, y, BOX_WIDTH, BOX_HEIGHT))
+        switches.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
     components.append(switches)
-    
+    for i in range(200):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        wires.append(pygame.Rect(x+150, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(wires)
     
     # Variables to track dragging state
     dragging = False
@@ -185,12 +189,10 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(Res100, (box.x, box.y))   
         for bulb in bulbs:
             screen.blit(bulb_off, (bulb.x, bulb.y))
-            pygame.draw.rect(screen, BLACK, box, 2)
         for switch in switches:
-            screen.blit(switch_off, (bulb.x, bulb.y))
-            pygame.draw.rect(screen, BLACK, box, 2)
-
-
+            screen.blit(switch_off, (switch.x, switch.y))
+        for wire in wires:
+            screen.blit(wire_long, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
         
 
@@ -203,17 +205,14 @@ def main():
         mouse_pos = pygame.mouse.get_pos()
         screen.fill(BLACK if current_screen == "title" else WHITE)
 
-        # Handle screen logic
         if current_screen == "title":
-            # Draw title
             title_surface = title_font.render("Lights Out", True, WHITE)
             title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 100))
             screen.blit(title_surface, title_rect)
 
             draw_buttons(mouse_pos)
-            # Handle lightning animation
             if lightning_timer <= 0:
-                if current_segment_index == 0:  # Generate new lightning path
+                if current_segment_index == 0: 
                     lightning_segments = generate_lightning()
                 draw_lightning()
 

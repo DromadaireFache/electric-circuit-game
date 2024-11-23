@@ -201,6 +201,34 @@ class Switch(Component):
     def switch(self):
         self.closed = not self.closed
 
+class Voltmeter(Component):
+    UNITS = 'V'
+    def __init__(self, pos=(0, 0), vertical=False, direction=1) -> None:
+        super().__init__(pos, vertical)
+        self.dir = direction
+        self.voltage = 0
+
+    def __str__(self):
+        return f"VM {self.voltage:.2f}{self.UNITS}"
+
+    def get_voltage(self, nodes: list[Node], x):
+        first_node = -1
+        second_node = -1
+        for i, node in enumerate(nodes):
+            if self in node:
+                if first_node == -1:
+                    first_node = i
+                else:
+                    second_node = i
+                    break
+        if second_node == -1:
+            self.voltage = 0
+            return
+        
+        volt1 = 0 if first_node == 0 else x[first_node-1]
+        volt2 = 0 if second_node == 0 else x[second_node-1]
+        self.voltage = (volt2 - volt1) * self.dir
+
 def G_matrix(nodes: list[Node]):
     #first wire made is ground, therefore does not go into matrix
     if len(nodes) < 2: return None
@@ -328,12 +356,15 @@ class Grid:
                     V_sources_list.append(component)
         return V_sources_list
     
-    def get_currents(self, nodes:list[Node]):
+    def update(self):
+        nodes = grid.find_nodes()
         x = x_matrix(nodes, self.V_sources())
         for i, node in enumerate(nodes):
             for component in node.components:
                 if type(component) is Wire and component.is_ameter:
                     component.get_current(nodes, self, i, x)
+                elif type(component) is Voltmeter:
+                    component.get_voltage(nodes, x)
     
 if __name__ == '__main__':
     grid = Grid(11, 11)
@@ -347,6 +378,7 @@ if __name__ == '__main__':
 
     grid.place(CurrentSource((3,1), True, current=1))
     grid.place(VoltageSource((6,7), volt=-1))
+    grid.place(Voltmeter((3,7), direction=-1))
 
     grid.place(Wire((2,1)))
     grid.place(Wire((4,1)))
@@ -364,8 +396,10 @@ if __name__ == '__main__':
     grid.place(Wire((4,8)))
     grid.place(Wire((5,8)))
     grid.place(Wire((6,8)))
+    grid.place(Wire((3,8)))
+    grid.place(Wire((3,6)))
     nodes = grid.find_nodes()
-    grid.get_currents(nodes)
+    grid.update()
     print(grid)
     for node in nodes: print(node)
 

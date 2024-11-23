@@ -16,20 +16,27 @@ def draw_grid():
     pygame.draw.rect(screen, 'BLACK', pygame.Rect(0, 0, 256, 800))
     pygame.draw.rect(screen, 'BLACK', pygame.Rect(256, 0, 640, 32))
     pygame.draw.rect(screen, 'BLACK',pygame.Rect(896, 0, 256, 800))
-    pygame.draw.rect(screen, 'black',pygame.Rect(256, 672, 640, 128))
+    pygame.draw.rect(screen, 'BLACK',pygame.Rect(256, 672, 640, 128))
 
-def sandbox(res):
+def sandbox(res, BUTTON_COLOR, button_font):
     active_res = None
     resistors = []
     for i in range(res):
-        x,y,w,h = 1
-        resistor = pygame.rect(x,y,w,h)
+        x = 1
+        y = 1
+        w = 1
+        h = 1
+        resistor = pygame.Rect(x,y,w,h)
         resistors.append(resistor)
 
     while True:
         draw_grid()
+        back_button = pygame.Rect(20, 20, 100, 50)
+        pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)
+        back_text = button_font.render("Back", True, 'white')
+        screen.blit(back_text, back_text.get_rect(center=back_button.center))
         for res in resistors:
-            pygame.draw.rect(screen,WHITE, pygame.Rect(10, 10, 10, 10))
+            pygame.draw.rect(screen,'white', pygame.Rect(10, 10, 10, 10))
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -38,7 +45,7 @@ def sandbox(res):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     for num,res in enumerate(resistor):
-                        if res.pygame.Rect.collidepoint(event.pos):
+                        if res.collidepoint(event.pos):
                             active_res = num
 
             if event.type == pygame.MOUSEBUTTONUP:

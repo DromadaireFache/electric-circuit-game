@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import functions
 
 
 # Initialize Pygame
@@ -127,12 +128,7 @@ def main():
                 lightning_timer -= 1
 
         elif current_screen == "sandbox":
-            draw_grid()
-            # Back button
-            back_button = pygame.Rect(20, 20, 100, 50)
-            pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)
-            back_text = button_font.render("Back", True, WHITE)
-            screen.blit(back_text, back_text.get_rect(center=back_button.center))
+            functions.sandbox(10, BUTTON_COLOR, button_font)
             
 
         # Event handling

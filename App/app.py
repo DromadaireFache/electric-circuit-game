@@ -2,7 +2,6 @@ import pygame
 import sys
 import random
 
-
 # Initialize Pygame
 pygame.init()
 
@@ -103,10 +102,12 @@ def draw_grid():
     side_ui = pygame.image.load('images/ui/side ui.png')
     top_ui = pygame.image.load('images/ui/top ui.png')
     bottom_ui = pygame.image.load('images/ui/bottom ui.png')
+    grid = pygame.image.load('images/ui/grid.png')
     screen.blit(side_ui, (0,0)) # Left
     screen.blit(side_ui, (896,0)) # Right
     screen.blit(top_ui, (256,0)) # Top
     screen.blit(bottom_ui, (256,672)) # Bottom
+    screen.blit(grid, (256, 32))
 
 def sandbox(num_resistors):
     # Create resistor boxes along the bottom

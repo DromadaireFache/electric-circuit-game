@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+from functions import *
 from components import *
 
 # Initialize Pygame

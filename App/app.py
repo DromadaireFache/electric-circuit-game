@@ -1,7 +1,7 @@
 import pygame
 import sys
 import random
-import functions
+
 
 # Initialize Pygame
 pygame.init()
@@ -133,7 +133,7 @@ def main():
             pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)
             back_text = button_font.render("Back", True, WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
-            functions.sandbox()
+            
 
         # Event handling
         for event in pygame.event.get():

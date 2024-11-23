@@ -6,7 +6,7 @@ import random
 pygame.init()
 
 # Screen setup
-SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
+SCREEN_WIDTH, SCREEN_HEIGHT = 1152, 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Lights Out with Lightning Animation")
 
@@ -23,10 +23,10 @@ button_font = pygame.font.Font(None, 48)
 
 # Button data for the title screen
 button_data = [
-    {"text": "Sandbox", "rect": pygame.Rect(275, 200, 250, 60), "screen": "sandbox"},
-    {"text": "Level Select", "rect": pygame.Rect(275, 280, 250, 60), "screen": "levels"},
-    {"text": "Encyclopedia", "rect": pygame.Rect(275, 360, 250, 60), "screen": "white"},
-    {"text": "About the Devs", "rect": pygame.Rect(275, 440, 250, 60), "screen": "yellow"},
+    {"text": "Sandbox", "rect": pygame.Rect(451, 200, 250, 60), "screen": "sandbox"},
+    {"text": "Level Select", "rect": pygame.Rect(451, 280, 250, 60), "screen": "levels"},
+    {"text": "Encyclopedia", "rect": pygame.Rect(451, 360, 250, 60), "screen": "white"},
+    {"text": "About the Devs", "rect": pygame.Rect(451, 440, 250, 60), "screen": "yellow"},
 ]
 
 # Lightning parameters
@@ -80,11 +80,16 @@ def draw_buttons(mouse_pos):
 
 def draw_grid():
     """Draw a 20x20 grid."""
-    grid_size = 20
-    for x in range(0, SCREEN_WIDTH, SCREEN_WIDTH // grid_size):
+    row_size = 36
+    column_size = 25
+    for x in range(0, SCREEN_WIDTH, SCREEN_WIDTH // row_size):
         pygame.draw.line(screen, BLACK, (x, 0), (x, SCREEN_HEIGHT))
-    for y in range(0, SCREEN_HEIGHT, SCREEN_HEIGHT // grid_size):
+    for y in range(0, SCREEN_HEIGHT, SCREEN_HEIGHT // column_size):
         pygame.draw.line(screen, BLACK, (0, y), (SCREEN_WIDTH, y))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(0, 0, 256, 800))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(256, 0, 640, 32))
+    pygame.draw.rect(screen, BLACK,pygame.Rect(896, 0, 256, 800))
+    pygame.draw.rect(screen, BLACK,pygame.Rect(256, 672, 640, 128))
 
 
 def main():

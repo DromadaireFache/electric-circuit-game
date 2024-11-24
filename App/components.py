@@ -294,7 +294,7 @@ class Voltmeter(Component):
 
 def G_matrix(nodes: list[Node]):
     #first wire made is ground, therefore does not go into matrix
-    if len(nodes) < 2: return None
+    if len(nodes) < 2: return np.zeros((0, 0))
     nodes = nodes[1:]
     G = np.zeros((len(nodes), len(nodes)))
 
@@ -425,7 +425,7 @@ class Grid:
         return V_sources_list
     
     def update(self):
-        nodes = grid.find_nodes()
+        nodes = self.find_nodes()
         x = x_matrix(nodes, self.V_sources())
         for i, node in enumerate(nodes):
             for component in node.components:

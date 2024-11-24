@@ -187,6 +187,8 @@ def draw_description(info_list):
     screen.blit(ameter_display, (1056,440))
 
 
+
+
 def draw_grid():
     nbr_row = 36
     nbr_column = 25
@@ -207,6 +209,7 @@ def draw_grid():
 
 
 def grid_area(num_resistors, num_bulbs, num_switch):
+    global components #test
     wires = []
     components = []
     resistors = []
@@ -353,9 +356,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             offset_y = box.y - pos[1]
                             mouse_x, mouse_y = pygame.mouse.get_pos()
                             if dragged_box in resistors:
-                                dragged_object = Resistor(res = 100, vertical = not component_rotations[i][k])
+                                dragged_object = Resistor(res = 100, vertical = component_rotations[i][k])
                             elif dragged_box in bulbs:
-                                dragged_object = Resistor(res = 100, is_light=True, vertical = not component_rotations[i][k])
+                                dragged_object = Resistor(res = 100, is_light=True, vertical = component_rotations[i][k])
                             elif dragged_box in wires:
                                 dragged_object = Wire()
                             elif dragged_box in switches:
@@ -381,6 +384,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                                 grid.remove((y,x))
 
         draw_grid()
+        volt_check = True
+        Amp_check = True
         for i, box in enumerate(resistors):
             screen.blit(rotate(Res100, 0, i), (box.x, box.y))
         for i, bulb in enumerate(bulbs):
@@ -389,8 +394,14 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
         for i, vol in enumerate(voltmeter):
             screen.blit(voltmeter_im, (vol.x, vol.y))
+            if vol.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 350) and vol.y != SCREEN_HEIGHT - BOX_HEIGHT - 20 and volt_check:
+                measure_area(True, False)
+                volt_check = False
         for i, am in enumerate(ameter):
             screen.blit(ameter_im, (am.x, am.y))
+            if am.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 400) and am.y != (SCREEN_HEIGHT - BOX_HEIGHT - 20) and Amp_check:
+                measure_area(False, True)
+                Amp_check = False
         for i, vol in enumerate(voltage_sources):
             screen.blit(voltage_source_im, (vol.x, vol.y))
         for i, cur in enumerate(current_sources):
@@ -407,7 +418,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 wire_sprite = pygame.transform.scale(wire_sprite, def_img_size)
             screen.blit(wire_sprite, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
-
+        
 def level_screen():
     level_button_data = [
         {'Text' : '1', 'rect': pygame.Rect(128,128,250,28), 'screen' : 'lvl 1' },

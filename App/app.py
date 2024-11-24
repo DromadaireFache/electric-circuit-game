@@ -181,34 +181,17 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                # for type in components:
-                #     for box in type:
-                #         if box.collidepoint(event.pos):
-                #             dragging = True
-                #             dragged_box = box
-                #             if dragged_box in resistors:
-                #                 dragged_object = Resistor(res=100)
-                #             elif dragged_box in bulbs:
-                #                 dragged_object = Resistor(res = 100, is_light=True)
-                #             elif dragged_box in wires:
-                #                 dragged_object = Wire() 
-                #             elif dragged_box in switches:
-                #                 dragged_object = Wire(is_switch=True)
-                #             offset_x = box.x - event.pos[0]
-                #             offset_y = box.y - event.pos[1]
-                #             mouse_x, mouse_y = pygame.mouse.get_pos()
-                #             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                #                 grid.remove((round((mouse_x-256)/32),round((mouse_y-32)/32)))
-                #             break
                 click = not click
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
+                    print(pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y))
                     try:
-                        dragged_object.row = round((mouse_x-256)/32)
-                        dragged_object.col = round((mouse_y-32)/32)
+                        #dragged_object.col, dragged_object.row = pixel2grid(mouse_x, mouse_y)
+                        dragged_object.col, dragged_object.row = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
                         grid.place(dragged_object)
+                        print(grid)
                         del dragged_object
                     except:
                         pass
@@ -236,7 +219,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             elif dragged_box in bulbs:
                                 dragged_object = Resistor(res = 100, is_light=True)
                             elif dragged_box in wires:
-                                dragged_object = Wire() 
+                                dragged_object = Wire()
                             elif dragged_box in switches:
                                 dragged_object = Wire(is_switch=True)
                             offset_x = box.x - pos[0]
@@ -251,7 +234,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             dragging = True
                             dragged_box = box
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                grid.remove((round((mouse_x-256)/32),round((mouse_y-32)/32)))
+                                grid.remove(pixel2grid(mouse_x,mouse_y))
 
         draw_grid()
         for i, box in enumerate(resistors):
@@ -261,8 +244,19 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for i, switch in enumerate(switches):
             screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
         for i, wire in enumerate(wires):
-            screen.blit(rotate(wire_long, 3, i), (wire.x, wire.y))
+            x, y = pixel2grid(wire.x, wire.y)
+            if x == 1 and y == 18:
+                print(grid.map[x][y])
+            wire_sprite = get_wire_sprite(pixel2grid(wire.x, wire.y), grid)
+            if wire_sprite == None:
+                wire_sprite = wire_long
+            else:
+                wire_sprite = pygame.transform.scale(wire_sprite, def_img_size)
+            screen.blit(wire_sprite, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
+
+def pixel2grid(x,y):
+    return round((x-256)/32),round((y-32)/32)
 
 def dev():
     main_frame = pygame.image.load('images/aboutdev/main frame.png')
@@ -277,7 +271,6 @@ def dev():
             screen.blit(connect_frame, (32 + (420*i), 208 + (380*j)))
             screen.blit(connect_frame, (368 + (420*i), 208 + (380*j)))
             screen.blit(sec_frame, (16 + (420*i),240 + (380*j)))
-
 
 
 def main():

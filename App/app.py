@@ -96,6 +96,21 @@ def draw_buttons(mouse_pos):
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
 
+def back_fct(mouse_pos):
+    rect = pygame.Rect(16, 700, 250, 60)
+    screen.blit(button_image, (16, 700))
+    if rect.collidepoint(mouse_pos):
+        screen.blit(button_hover_image, rect)
+    else:
+        screen.blit(button_image, rect)
+    text_surface = button_font.render('Back', True, WHITE)
+    text_rect = text_surface.get_rect(center=rect.center)
+    screen.blit(text_surface, text_rect)
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if rect.collidepoint(mouse_pos):
+                main()
+    
 
 
 def draw_grid():
@@ -161,6 +176,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     offset_x, offset_y = 0, 0
     clock = pygame.time.Clock()
     while True:
+        mouse_pos = pygame.mouse.get_pos()
+        back_fct(mouse_pos)
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
@@ -212,6 +229,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             
 
         draw_grid()
+        back_fct(mouse_pos)
         for box in resistors:
             screen.blit(Res100, (box.x, box.y))   
         for bulb in bulbs:
@@ -220,7 +238,6 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(switch_off, (switch.x, switch.y))
         for wire in wires:
             screen.blit(wire_long, (wire.x, wire.y))
-            
         pygame.display.flip()  # Update the screen
 
 def dev():
@@ -232,11 +249,10 @@ def dev():
     connect_frame = pygame.transform.scale(connect_frame, (16, 32))
     for i in range(2):
         for j in range(2):
-            screen.blit(main_frame, (16 + (420*i),16 + (380*j)))
-            screen.blit(connect_frame, (32 + (420*i), 208 + (380*j)))
-            screen.blit(connect_frame, (368 + (420*i), 208 + (380*j)))
-            screen.blit(sec_frame, (16 + (420*i),240 + (380*j)))
-
+            screen.blit(main_frame, (16 + (420*i),16 + (350*j)))
+            screen.blit(connect_frame, (32 + (420*i), 208 + (350*j)))
+            screen.blit(connect_frame, (368 + (420*i), 208 + (350*j)))
+            screen.blit(sec_frame, (16 + (420*i),240 + (350*j)))
 
 
 def main():
@@ -273,9 +289,17 @@ def main():
             back_text = button_font.render('Back',True,WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
             grid_area(10,10,10)
+            back_fct(mouse_pos)
+        
+        elif current_screen == 'levels':
+            back_fct(mouse_pos)
+        
+        elif current_screen == 'nerd_stuff':
+            back_fct(mouse_pos)
 
         elif current_screen == 'devs':
             dev()
+            back_fct(mouse_pos)
 
             
 

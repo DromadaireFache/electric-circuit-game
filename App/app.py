@@ -186,14 +186,14 @@ def draw_description(info_list):
     screen.blit(voltmeter_display, (928,440))
     screen.blit(ameter_display, (1056,440))
 
-def measure_area(Volt, Amp, Voltage = 0, Ampage = 0):
+def measure_area(Volt, Amp, voltage = 0, ampage = 0):
     Area = pygame.Rect(300, 300, 256, 64)
     if Volt:
-        Voltage = str(Voltage) + 'V'
-        img = general_font.render(Voltage, True, BLACK)
+        voltage = str(voltage) + 'V'
+        img = general_font.render(voltage, True, BLACK)
         screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT -40))
     if Amp:
-        Amps = str(Ampage) + 'A'
+        Amps = str(ampage) + 'A'
         img = general_font.render(Amps, True, BLACK)
         screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT - 20 ))
 
@@ -312,7 +312,6 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     clock = pygame.time.Clock()
     click = False
     while True:
-        grid.update()
         mouse_pos = pygame.mouse.get_pos()
         # back_fct(mouse_pos)
         for event in pygame.event.get():
@@ -333,6 +332,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                         #dragged_object.col, dragged_object.row = pixel2grid(mouse_x, mouse_y)
                         dragged_object.col, dragged_object.row = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
                         grid.place(dragged_object)
+                        grid.update()
                         print(grid)
                         del dragged_object
                     except:
@@ -393,7 +393,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
 
         draw_grid()
         volt_check = True
-        Amp_check = True
+        amp_check = True
         for i, box in enumerate(resistors):
             screen.blit(rotate(Res100, 0, i), (box.x, box.y))
         for i, bulb in enumerate(bulbs):
@@ -402,14 +402,20 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
         for i, vol in enumerate(voltmeter):
             screen.blit(voltmeter_im, (vol.x, vol.y))
-            if vol.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 350) and vol.y != SCREEN_HEIGHT - BOX_HEIGHT - 20 and volt_check:
-                measure_area(True, False, Voltmeter().voltage)
-                volt_check = False
+            x, y = pixel2grid(vol.x, vol.y)
+            if 20 > x >= 0 and 20 > y >= 0 and volt_check:
+                try:
+                    measure_area(True, False, voltage=grid.map[y][x].voltage)
+                    volt_check = False
+                except: pass
         for i, am in enumerate(ameter):
             screen.blit(ameter_im, (am.x, am.y))
-            if am.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 400) and am.y != (SCREEN_HEIGHT - BOX_HEIGHT - 20) and Amp_check:
-                measure_area(False, True, 0, Wire(is_ameter=True).current)
-                Amp_check = False
+            x, y = pixel2grid(am.x, am.y)
+            if 20 > x >= 0 and 20 > y >= 0 and amp_check:
+                try:
+                    measure_area(False, True, ampage=grid.map[y][x].current)
+                    amp_check = False
+                except: pass
         for i, vol in enumerate(voltage_sources):
             screen.blit(voltage_source_im, (vol.x, vol.y))
         for i, cur in enumerate(current_sources):
@@ -508,6 +514,10 @@ def main():
             title_surface = title_font.render("Lights Out!", True, WHITE)
             title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 100))
             screen.blit(title_surface, title_rect)
+            warning_sign1 = pygame.image.load('images/ui/warning sign.png')
+            warning_sign2 = pygame.image.load('images/ui/warning sign 2.png')
+            screen.blit(warning_sign1, (880,564))
+            screen.blit(warning_sign2, (60,436))
 
             draw_buttons(mouse_pos)
             if lightning_timer <= 0:

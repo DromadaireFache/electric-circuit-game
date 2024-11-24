@@ -174,9 +174,9 @@ def draw_description(info_list):
     draw_desc_fct(desc_current,960,280)
     current_display = pygame.transform.scale(pygame.image.load('images/current source/current source.png'), display_size)
     draw_desc_fct(desc_voltmeter, 832,408)
-    voltmeter_display = pygame.transform.scale(pygame.image.load('images/voltmeter/voltmeter both.png'), display_size)
+    voltmeter_display = pygame.transform.scale(pygame.image.load('images/voltmeter/new voltmeter.png'), display_size)
     draw_desc_fct(desc_ameter,960,408)
-    ameter_display = pygame.transform.scale(pygame.image.load('images/ampmeter/ampmeter both.png'), display_size)
+    ameter_display = pygame.transform.scale(pygame.image.load('images/ampmeter/new ameter.png'), display_size)
     screen.blit(wire_display, (928,56))
     screen.blit(battery_display, (1056,56))
     screen.blit(lightbulb_display, (928,184))
@@ -245,8 +245,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     switch_on = pygame.transform.scale(pygame.image.load('images/switch/new switch on.png'), bulb_img_size)
     switch_off = pygame.transform.scale(pygame.image.load('images/switch/new switch off.png'), def_img_size)
     wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
-    voltmeter_im = pygame.transform.scale(pygame.image.load('images/voltmeter/voltmeter both.png'), def_img_size)
-    ameter_im = pygame.transform.scale(pygame.image.load('images/ampmeter/ampmeter both.png'), def_img_size)
+    voltmeter_im = pygame.transform.scale(pygame.image.load('images/voltmeter/new voltmeter.png'), def_img_size)
+    ameter_im = pygame.transform.scale(pygame.image.load('images/ampmeter/new ameter.png'), def_img_size)
     voltage_source_im = pygame.transform.scale(pygame.image.load('images/battery/battery wire both ends.png'), def_img_size)
     current_source_im = pygame.transform.scale(pygame.image.load('images/current source/current source both.png'), def_img_size)
     for i in range(num_resistors):
@@ -518,8 +518,10 @@ def main():
             screen.blit(title_surface, title_rect)
             warning_sign1 = pygame.image.load('images/ui/warning sign.png')
             warning_sign2 = pygame.image.load('images/ui/warning sign 2.png')
+            fence = pygame.image.load('images/ui/fence.png')
             screen.blit(warning_sign1, (880,564))
             screen.blit(warning_sign2, (60,436))
+            screen.blit(fence, (0,624))
 
             draw_buttons(mouse_pos)
             if lightning_timer <= 0:

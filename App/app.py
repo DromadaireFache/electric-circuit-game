@@ -514,8 +514,10 @@ def main():
             title_surface = title_font.render("Lights Out!", True, WHITE)
             title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 100))
             screen.blit(title_surface, title_rect)
-            warning_sign = pygame.image.load('images/ui/warning sign.png')
-            screen.blit(warning_sign, (850,544))
+            warning_sign1 = pygame.image.load('images/ui/warning sign.png')
+            warning_sign2 = pygame.image.load('images/ui/warning sign 2.png')
+            screen.blit(warning_sign1, (880,564))
+            screen.blit(warning_sign2, (60,436))
 
             draw_buttons(mouse_pos)
             if lightning_timer <= 0:

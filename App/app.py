@@ -580,13 +580,10 @@ def main():
         #elif current_screen == 'nerd_stuff':
             #encyclopedia()
             # back_fct(mouse_pos)
-            #pass
-            #back_fct(mouse_pos)
-            #continue
+            pass
 
         elif current_screen == 'devs':
             dev()
-            #back_fct(mouse_pos)
             # back_fct(mouse_pos)
 
         elif current_screen == 'quit':

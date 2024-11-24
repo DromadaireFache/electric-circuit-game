@@ -35,12 +35,14 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
-button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
-general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
-dev_font_main = pygame.font.Font('App/Grand9k Pixel.ttf', 32)
+title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
+general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
+dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
 
 # Button data for the title screen
+button_image = pygame.image.load('images/ui/button_new.png')
+button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_image = pygame.image.load('images/ui/button_new.png')
 button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_data = [
@@ -102,20 +104,20 @@ def draw_buttons(mouse_pos):
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
 
-def back_fct(mouse_pos):
-    rect = pygame.Rect(16, 700, 250, 60)
-    screen.blit(button_image, (16, 700))
-    if rect.collidepoint(mouse_pos):
-        screen.blit(button_hover_image, rect)
-    else:
-        screen.blit(button_image, rect)
-    text_surface = button_font.render('Back', True, WHITE)
-    text_rect = text_surface.get_rect(center=rect.center)
-    screen.blit(text_surface, text_rect)
-    for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if rect.collidepoint(mouse_pos):
-                main()
+# def back_fct(mouse_pos):
+#     rect = pygame.Rect(16, 700, 250, 60)
+#     screen.blit(button_image, (16, 700))
+#     if rect.collidepoint(mouse_pos):
+#         screen.blit(button_hover_image, rect)
+#     else:
+#         screen.blit(button_image, rect)
+#     text_surface = button_font.render('Back', True, WHITE)
+#     text_rect = text_surface.get_rect(center=rect.center)
+#     screen.blit(text_surface, text_rect)
+#     for event in pygame.event.get():
+#         if event.type == pygame.MOUSEBUTTONDOWN:
+#             if rect.collidepoint(mouse_pos):
+#                 main()
     
 def level_fct(mouse_pos, lvl, x):
     rect = pygame.Rect(x, 350, 250, 250)
@@ -217,12 +219,13 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     click = False
     while True:
         mouse_pos = pygame.mouse.get_pos()
+        # back_fct(mouse_pos)
         for event in pygame.event.get():
-            
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                print('click')
                 click = not click
             
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -251,6 +254,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             
             elif click:
                 pos = pygame.mouse.get_pos()
+                print('click')
                 for i, type in enumerate(components):
                     for k, box in enumerate(type):
                         if box.collidepoint(pos):
@@ -279,15 +283,24 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                                 grid.remove(pixel2grid(mouse_x,mouse_y))
 
         draw_grid()
-        for box in resistors:
-            screen.blit(Res100, (box.x, box.y))   
-        for bulb in bulbs:
-            screen.blit(bulb_off, (bulb.x, bulb.y))
-        for switch in switches:
-            screen.blit(switch_off, (switch.x, switch.y))
-        for wire in wires:
-            screen.blit(wire_long, (wire.x, wire.y))
+        for i, box in enumerate(resistors):
+            screen.blit(rotate(Res100, 0, i), (box.x, box.y))
+        for i, bulb in enumerate(bulbs):
+            screen.blit(rotate(bulb_off, 1, i), (bulb.x, bulb.y))
+        for i, switch in enumerate(switches):
+            screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
+        for i, wire in enumerate(wires):
+            x, y = pixel2grid(wire.x, wire.y)
+            if x == 1 and y == 18:
+                print(grid.map[x][y])
+            wire_sprite = get_wire_sprite(pixel2grid(wire.x, wire.y), grid)
+            if wire_sprite == None:
+                wire_sprite = wire_long
+            else:
+                wire_sprite = pygame.transform.scale(wire_sprite, def_img_size)
+            screen.blit(wire_sprite, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
+
 def level_screen():
     level_button_data = [
         {'Text' : '1', 'rect': pygame.Rect(128,128,250,28), 'screen' : 'lvl 1' },
@@ -299,7 +312,7 @@ def level_screen():
         mouse_pos = pygame.mouse.get_pos()
         level_fct(mouse_pos, '1', 60)
         level_fct(mouse_pos, '2', 500 )
-        back_fct(mouse_pos)
+        # back_fct(mouse_pos)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -387,7 +400,7 @@ def main():
             back_text = button_font.render('Back',True,WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
             grid_area(10,10,10)
-            back_fct(mouse_pos)
+            # back_fct(mouse_pos)
         
         elif current_screen == 'levels':
             screen.fill(RED)

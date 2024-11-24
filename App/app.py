@@ -193,7 +193,7 @@ def measure_area(Volt, Amp, voltage = 0, ampage = 0):
         img = general_font.render(voltage, True, BLACK)
         screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT -40))
     if Amp:
-        Amps = str(round(ampage,2)) + 'A'
+        Amps = str(round(ampage),2) + 'A'
         img = general_font.render(Amps, True, BLACK)
         screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT - 20 ))
 
@@ -397,12 +397,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for i, box in enumerate(resistors):
             screen.blit(rotate(Res100, 0, i), (box.x, box.y))
         for i, bulb in enumerate(bulbs):
-            bulb_sprite = get_light_sprite(pixel2grid(bulb.x, bulb.y), grid)
-            if bulb_sprite == None:
-                bulb_sprite = bulb_off
-            else:
-                bulb_sprite = pygame.transform.scale(bulb_sprite, def_img_size)
-            screen.blit(bulb_sprite, (bulb.x, bulb.y))
+            screen.blit(rotate(bulb_off, 1, i), (bulb.x, bulb.y))
         for i, switch in enumerate(switches):
             screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
         for i, vol in enumerate(voltmeter):
@@ -427,6 +422,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(current_source_im, (cur.x, cur.y))
         
         for i, wire in enumerate(wires):
+            x, y = pixel2grid(wire.x, wire.y)
+            if x == 1 and y == 18:
+                print(grid.map[x][y])
             wire_sprite = get_wire_sprite(pixel2grid(wire.x, wire.y), grid)
             if wire_sprite == None:
                 wire_sprite = wire_long
@@ -518,10 +516,8 @@ def main():
             screen.blit(title_surface, title_rect)
             warning_sign1 = pygame.image.load('images/ui/warning sign.png')
             warning_sign2 = pygame.image.load('images/ui/warning sign 2.png')
-            fence = pygame.image.load('images/ui/fence.png')
             screen.blit(warning_sign1, (880,564))
             screen.blit(warning_sign2, (60,436))
-            screen.blit(fence, (0,624))
 
             draw_buttons(mouse_pos)
             if lightning_timer <= 0:

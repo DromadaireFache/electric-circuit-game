@@ -186,7 +186,16 @@ def draw_description(info_list):
     screen.blit(voltmeter_display, (928,440))
     screen.blit(ameter_display, (1056,440))
 
-
+def measure_area(Volt, Amp, Voltage = 0, Ampage = 0):
+    Area = pygame.Rect(300, 300, 256, 64)
+    if Volt:
+        Voltage = str(Voltage) + 'V'
+        img = general_font.render(Voltage, True, BLACK)
+        screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT -40))
+    if Amp:
+        Amps = str(Ampage) + 'A'
+        img = general_font.render(Amps, True, BLACK)
+        screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT - 20 ))
 
 
 def draw_grid():
@@ -344,12 +353,10 @@ def grid_area(num_resistors, num_bulbs, num_switch):
 
             
             elif click:
-                
                 pos = pygame.mouse.get_pos()
                 for i, type in enumerate(components):
                     for k, box in enumerate(type):
                         if box.collidepoint(pos):
-                            print('over')
                             dragging = True
                             dragged_box = box
                             offset_x = box.x - pos[0]
@@ -370,18 +377,19 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             elif dragged_box in voltage_sources:
                                 dragged_object = VoltageSource(volt=5)
                             elif dragged_box in current_sources:
-                                dragged_object = CurrentSource(current=0.1)
+                                dragged_object = CurrentSource(current=1)
 
-                            if event.type == pygame.KEYDOWN:
+                            if event.type == pygame.TEXTINPUT:
                                 print('down')
-                                if event.key == pygame.K_r:
+                                if event.text == 'r':
                                     component_rotations[i][k] = not component_rotations[i][k]
                                     print('r_press', component_rotations[i][k], i,k)
-                            
+
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
                                 x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
                                 print('remove:', (y,x))
                                 grid.remove((y,x))
+                        
 
         draw_grid()
         volt_check = True

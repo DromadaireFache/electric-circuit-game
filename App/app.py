@@ -139,20 +139,18 @@ def level_fct(mouse_pos, lvl, x):
             if rect.collidepoint(mouse_pos):
                 main()
 
-def draw_description():
-    title = 'SANDBOX'
-    description1 = 'This is where you can try'
-    description2 = 'out your circuits! Have fun!'
-    description3 = 'Wires'
-    description4 = 'Battery'
-    description5 = 'Lightbulb'
-    description6 = 'Switch'
-    description7 = 'Resistor'
-    description8 = 'Current Source'
-    description9 = 'Voltmeter'
-    description10 = 'Ameter'
+sandbox_info = ['SANDBOX','This is where you can try','out your circuits! Have fun!']
+def draw_description(info_list):
+    desc_wire = 'Wires'
+    desc_battery = 'Battery'
+    desc_lightbulb = 'Lightbulb'
+    desc_switch = 'Switch'
+    desc_resistor = 'Resistor'
+    desc_current = 'Current Src'
+    desc_voltmeter = 'Voltmeter'
+    desc_ameter = 'Ameter'
     rect_title = pygame.Rect(0,0,256,64)
-    title_surface = button_font.render(title,True,WHITE)
+    title_surface = button_font.render(info_list[0],True,WHITE)
     title_rect = title_surface.get_rect(center=rect_title.center)
     screen.blit(title_surface, title_rect)
     def draw_desc_fct(text,side,height):
@@ -160,11 +158,44 @@ def draw_description():
        desc_surface = desc_surface = sandbox_font.render(text,True,WHITE)
        desc_rect = desc_surface.get_rect(center=rect_desc.center)
        screen.blit(desc_surface, desc_rect)
-    draw_desc_fct(description1,0,64)
-    draw_desc_fct(description2,0,88)
-    draw_desc_fct(description3,832,24)
-    draw_desc_fct(description4,960,24)
-    
+    for i in range(len(info_list)-1):
+        draw_desc_fct(info_list[1+i],0,64+(i*24))
+    display_size = (64,64)
+    draw_desc_fct(desc_wire,832,24)
+    wire_display = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), display_size)
+    draw_desc_fct(desc_battery,960,24)
+    battery_display = pygame.transform.scale(pygame.image.load('images/battery/battery no wire.png'), display_size)
+    draw_desc_fct(desc_lightbulb,832,152)
+    lightbulb_display = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off.png'), display_size)
+    draw_desc_fct(desc_switch, 960,152)
+    switch_display = pygame.transform.scale(pygame.image.load('images/switch/new switch off.png'), display_size)
+    draw_desc_fct(desc_resistor,832,280)
+    resistor_display = pygame.transform.scale(pygame.image.load('images/resistors/resistor 100.png'), display_size)
+    draw_desc_fct(desc_current,960,280)
+    current_display = pygame.transform.scale(pygame.image.load('images/current source/current source.png'), display_size)
+    draw_desc_fct(desc_voltmeter, 832,408)
+    voltmeter_display = pygame.transform.scale(pygame.image.load('images/voltmeter/voltmeter both.png'), display_size)
+    draw_desc_fct(desc_ameter,960,408)
+    ameter_display = pygame.transform.scale(pygame.image.load('images/ampmeter/ampmeter both.png'), display_size)
+    screen.blit(wire_display, (928,56))
+    screen.blit(battery_display, (1056,56))
+    screen.blit(lightbulb_display, (928,184))
+    screen.blit(switch_display, (1056,184))
+    screen.blit(resistor_display, (928,312))
+    screen.blit(current_display, (1056,312))
+    screen.blit(voltmeter_display, (928,440))
+    screen.blit(ameter_display, (1056,440))
+
+def measure_area(Volt, Amp, Voltage = 0, Ampage = 0):
+    Area = pygame.Rect(300, 300, 256, 64)
+    if Volt:
+        Voltage = str(Voltage) + 'V'
+        img = general_font.render(Voltage, True, BLACK)
+        screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT -40))
+    if Amp:
+        Amps = str(Ampage) + 'A'
+        img = general_font.render(Amps, True, BLACK)
+        screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT - 20 ))
 
 
 def draw_grid():
@@ -183,10 +214,11 @@ def draw_grid():
     screen.blit(top_ui, (256,0)) # Top
     screen.blit(bottom_ui, (256,672)) # Bottom
     screen.blit(grid, (256, 32))
-    draw_description()
+    draw_description(sandbox_info)
 
 
 def grid_area(num_resistors, num_bulbs, num_switch):
+    global components #test
     wires = []
     components = []
     resistors = []
@@ -204,14 +236,14 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     Res100 = pygame.transform.scale(Res100, def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
     bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
-    switch_on = pygame.transform.scale(pygame.image.load('images/switch/switch on.png'), bulb_img_size)
-    switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
+    switch_on = pygame.transform.scale(pygame.image.load('images/switch/new switch on.png'), bulb_img_size)
+    switch_off = pygame.transform.scale(pygame.image.load('images/switch/new switch off.png'), def_img_size)
     wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     Volt = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
     bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
-    switch_on = pygame.transform.scale(pygame.image.load('images/switch/switch on.png'), bulb_img_size)
-    switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
+    switch_on = pygame.transform.scale(pygame.image.load('images/switch/new switch on.png'), bulb_img_size)
+    switch_off = pygame.transform.scale(pygame.image.load('images/switch/new switch off.png'), def_img_size)
     wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     voltmeter_im = pygame.transform.scale(pygame.image.load('images/voltmeter/voltmeter both.png'), def_img_size)
     ameter_im = pygame.transform.scale(pygame.image.load('images/ampmeter/ampmeter both.png'), def_img_size)
@@ -331,9 +363,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             offset_y = box.y - pos[1]
                             mouse_x, mouse_y = pygame.mouse.get_pos()
                             if dragged_box in resistors:
-                                dragged_object = Resistor(res = 10, vertical = component_rotations[i][k])
+                                dragged_object = Resistor(res = 100, vertical = component_rotations[i][k])
                             elif dragged_box in bulbs:
-                                dragged_object = Resistor(res = 10, is_light=True, vertical = component_rotations[i][k])
+                                dragged_object = Resistor(res = 100, is_light=True, vertical = component_rotations[i][k])
                             elif dragged_box in wires:
                                 dragged_object = Wire()
                             elif dragged_box in switches:
@@ -360,6 +392,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                         
 
         draw_grid()
+        volt_check = True
+        Amp_check = True
         for i, box in enumerate(resistors):
             screen.blit(rotate(Res100, 0, i), (box.x, box.y))
         for i, bulb in enumerate(bulbs):
@@ -368,8 +402,14 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
         for i, vol in enumerate(voltmeter):
             screen.blit(voltmeter_im, (vol.x, vol.y))
+            if vol.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 350) and vol.y != SCREEN_HEIGHT - BOX_HEIGHT - 20 and volt_check:
+                measure_area(True, False)
+                volt_check = False
         for i, am in enumerate(ameter):
             screen.blit(ameter_im, (am.x, am.y))
+            if am.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 400) and am.y != (SCREEN_HEIGHT - BOX_HEIGHT - 20) and Amp_check:
+                measure_area(False, True)
+                Amp_check = False
         for i, vol in enumerate(voltage_sources):
             screen.blit(voltage_source_im, (vol.x, vol.y))
         for i, cur in enumerate(current_sources):
@@ -386,7 +426,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 wire_sprite = pygame.transform.scale(wire_sprite, def_img_size)
             screen.blit(wire_sprite, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
-
+        
 def level_screen():
     level_button_data = [
         {'Text' : '1', 'rect': pygame.Rect(128,128,250,28), 'screen' : 'lvl 1' },

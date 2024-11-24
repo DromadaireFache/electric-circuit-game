@@ -37,6 +37,7 @@ title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
 button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
 general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
 dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
+sandbox_font = pygame.font.Font('Grand9k Pixel.ttf', 16)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')
@@ -89,7 +90,14 @@ def generate_lightning():
 def draw_lightning():
     """Draw the visible lightning segments."""
     for i in range(current_segment_index):
-        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 6)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+
 
 def draw_buttons(mouse_pos):
     for button in button_data:
@@ -131,6 +139,22 @@ def level_fct(mouse_pos, lvl, x):
             if rect.collidepoint(mouse_pos):
                 main()
 
+def draw_description():
+    title = 'SANDBOX'
+    description1 = 'This is where you can try'
+    description2 =  'out your circuits! Have fun!'
+    rect_title = pygame.Rect(0,0,256,64)
+    title_surface = button_font.render(title,True,WHITE)
+    title_rect = title_surface.get_rect(center=rect_title.center)
+    screen.blit(title_surface, title_rect)
+    def draw_description_fct(text,side,height):
+       rect_desc = pygame.Rect(0,height,256,32)
+       desc_surface = desc_surface = sandbox_font.render(text,True,WHITE)
+       desc_rect = desc_surface.get_rect(center=rect_desc.center)
+       screen.blit(desc_surface, desc_rect)
+    draw_description_fct(description1,0,64)
+    draw_description_fct(description2,0,88)
+
 
 def draw_grid():
     nbr_row = 36
@@ -148,6 +172,8 @@ def draw_grid():
     screen.blit(top_ui, (256,0)) # Top
     screen.blit(bottom_ui, (256,672)) # Bottom
     screen.blit(grid, (256, 32))
+    draw_description()
+
 
 def grid_area(num_resistors, num_bulbs, num_switch):
     wires = []
@@ -245,6 +271,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     # Keep box within screen bounds
                     dragged_box.x = max(0, min(SCREEN_WIDTH - BOX_WIDTH, dragged_box.x))
                     dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
 
             
             elif click:
@@ -327,6 +356,9 @@ def level_screen():
                     back_button = pygame.Rect(20, 20, 100, 50)
                     if back_button.collidepoint(mouse_pos):
                         current_screen = 'levels'
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
         pygame.display.flip()
 
 def pixel2grid(x,y):
@@ -364,6 +396,7 @@ def dev():
 
 
 def main():
+    grid.remove()
     global lightning_segments, current_segment_index, lightning_timer, strike_from_left
     current_screen = "title"
 
@@ -380,6 +413,8 @@ def main():
             if lightning_timer <= 0:
                 if current_segment_index == 0: 
                     lightning_segments = generate_lightning()
+                draw_lightning()
+                draw_lightning()
                 draw_lightning()
 
                 current_segment_index += 1
@@ -407,7 +442,7 @@ def main():
         #elif current_screen == 'nerd_stuff':
             #encyclopedia()
             # back_fct(mouse_pos)
-            pass
+            #pass
             #back_fct(mouse_pos)
             #continue
 

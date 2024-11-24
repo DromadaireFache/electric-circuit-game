@@ -186,7 +186,16 @@ def draw_description(info_list):
     screen.blit(voltmeter_display, (928,440))
     screen.blit(ameter_display, (1056,440))
 
-
+def measure_area(Volt, Amp, Voltage = 0, Ampage = 0):
+    Area = pygame.Rect(300, 300, 256, 64)
+    if Volt:
+        Voltage = str(Voltage) + 'V'
+        img = general_font.render(Voltage, True, BLACK)
+        screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT -40))
+    if Amp:
+        Amps = str(Ampage) + 'A'
+        img = general_font.render(Amps, True, BLACK)
+        screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT - 20 ))
 
 
 def draw_grid():

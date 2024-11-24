@@ -236,14 +236,16 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     Res100 = pygame.transform.scale(Res100, def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
     bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
-    switch_on = pygame.transform.scale(pygame.image.load('images/switch/new switch on.png'), bulb_img_size)
-    switch_off = pygame.transform.scale(pygame.image.load('images/switch/new switch off.png'), def_img_size)
+    # switch_on = pygame.transform.scale(pygame.image.load('images/switch/new switch on.png'), def_img_size)
+    # switch_off = pygame.transform.scale(pygame.image.load('images/switch/new switch off.png'), def_img_size)
+    
     wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     Volt = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
     bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
-    switch_on = pygame.transform.scale(pygame.image.load('images/switch/new switch on.png'), bulb_img_size)
+    switch_on = pygame.transform.scale(pygame.image.load('images/switch/new switch on.png'), def_img_size)
     switch_off = pygame.transform.scale(pygame.image.load('images/switch/new switch off.png'), def_img_size)
+    switch_state = switch_off
     wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     voltmeter_im = pygame.transform.scale(pygame.image.load('images/voltmeter/new voltmeter.png'), def_img_size)
     ameter_im = pygame.transform.scale(pygame.image.load('images/ampmeter/new ameter.png'), def_img_size)
@@ -269,6 +271,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         switches.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
         switch_position = (x,y)
     components.append(switches)
+    switch_states = [False]*len(switches)
     component_rotations.append([False]*len(switches))
     for i in range(200):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
@@ -308,6 +311,13 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     def rotate(sprite, i, k):
         return pygame.transform.rotate(sprite, 90) if component_rotations[i][k] else sprite
 
+    def flip_switch(i):
+        if switch_states[i]:
+            return switch_on
+        else:
+            return switch_off
+
+
     # Main loop for the sandbox
     clock = pygame.time.Clock()
     click = False
@@ -322,7 +332,6 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 click = not click
                 print('click')
-                
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -370,6 +379,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                                 dragged_object = Wire()
                             elif dragged_box in switches:
                                 dragged_object = Wire(is_switch=True)
+                                dragged_object.closed = switch_states[k]
                             elif dragged_box in voltmeter:
                                 dragged_object = Voltmeter()
                             elif dragged_box in ameter:
@@ -389,7 +399,19 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                                 x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
                                 print('remove:', (y,x))
                                 grid.remove((y,x))
-                        
+            elif event.type == pygame.TEXTINPUT:
+                if event.text == ' ':
+                    for type in components:
+                        if type == switches:
+                            pos = pygame.mouse.get_pos()
+                            for k, box in enumerate(type):
+                                if box.collidepoint(pos):
+                                    print(k)
+                                    switch_states[k] = not switch_states[k]
+                                    print(switch_states[k])
+                                    dragged_object = Wire(is_switch=True)
+                                    dragged_object.closed = switch_states[k]
+
 
         draw_grid()
         volt_check = True
@@ -399,7 +421,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for i, bulb in enumerate(bulbs):
             screen.blit(rotate(bulb_off, 1, i), (bulb.x, bulb.y))
         for i, switch in enumerate(switches):
-            screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
+            screen.blit(rotate(flip_switch(i), 2, i), (switch.x, switch.y))
         for i, vol in enumerate(voltmeter):
             screen.blit(voltmeter_im, (vol.x, vol.y))
             x, y = pixel2grid(vol.x, vol.y)

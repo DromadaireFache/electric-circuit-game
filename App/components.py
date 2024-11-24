@@ -59,9 +59,10 @@ class Wire(Component):
         if self.row > 0 and ignore[0] != -1 and not (self.has_dir and not self.vertical): #add the one above
             component: Component = map[self.row-1][self.col]
             # print(component)
-            if type(self) is type(component) and not (self.is_switch and not self.closed) \
-                and not (component.has_dir and not component.vertical):  #if its a wire continue to make node bigger
-                component.makenode(node, map, ignore=(1,0))
+            if type(self) is type(component):  #if its a wire continue to make node bigger
+                if not (self.is_switch and not self.closed) \
+                and not (component.has_dir and not component.vertical):
+                    component.makenode(node, map, ignore=(1,0))
 
             elif component != None and component.vertical: #if its another component just add it to node
                 component.in_node += 1
@@ -74,9 +75,10 @@ class Wire(Component):
         if self.row < rows-1 and ignore[0] != 1 and not (self.has_dir and not self.vertical): #add the one below
             component: Component = map[self.row+1][self.col]
             # print(component)
-            if type(self) is type(component) and not (self.is_switch and not self.closed) \
+            if type(self) is type(component):
+                if not (self.is_switch and not self.closed) \
                 and not (component.has_dir and not component.vertical):
-                component.makenode(node, map, ignore=(-1,0))
+                    component.makenode(node, map, ignore=(-1,0))
 
             elif component != None and component.vertical:
                 component.in_node += 1
@@ -89,9 +91,10 @@ class Wire(Component):
         if self.col > 0 and ignore[1] != -1 and not (self.has_dir and self.vertical): #add the one right
             component: Component = map[self.row][self.col+1]
             # print(component)
-            if type(self) is type(component) and not (self.is_switch and not self.closed) \
+            if type(self) is type(component):
+                if not (self.is_switch and not self.closed) \
                 and not (component.has_dir and component.vertical):
-                component.makenode(node, map, ignore=(0,1)) 
+                    component.makenode(node, map, ignore=(0,1)) 
 
             elif component != None and not component.vertical:
                 component.in_node += 1
@@ -104,9 +107,10 @@ class Wire(Component):
         if self.col < cols-1 and ignore[1] != 1 and not (self.has_dir and self.vertical): #add the one left
             component: Component = map[self.row][self.col-1]
             # print(component)
-            if type(self) is type(component) and not (self.is_switch and not self.closed) \
+            if type(self) is type(component):
+                if not (self.is_switch and not self.closed) \
                 and not (component.has_dir and component.vertical):
-                component.makenode(node, map, ignore=(0,-1))
+                    component.makenode(node, map, ignore=(0,-1))
 
             elif component != None and not component.vertical:
                 component.in_node += 1
@@ -382,6 +386,8 @@ class Grid:
             self.map[pos[0]][pos[1]] = None
 
     def __str__(self):
+        nodes = self.find_nodes()
+        for node in nodes: print(node)
         string = ''.rjust(self.rows*(Grid.DISSIZE+1)+1,'-') + '\n'
         for row in self.map:
             for component in row:
@@ -414,8 +420,15 @@ class Grid:
             for j, component in enumerate(node):
                 if component.in_node != 2 and not type(component) is Wire:
                     nodes[i].components.pop(j)
+                    continue
                 if not type(component) is Wire:
                     not_all_wires = True
+                
+                try:
+                    nodes[i].components.pop(node.components.index(component, j+1))
+                    nodes[i].components.pop(j)
+                except: continue
+
             if not not_all_wires or len(nodes[i].components) == 0:
                 nodes.pop(i)
 

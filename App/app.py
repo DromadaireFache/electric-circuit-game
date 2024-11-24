@@ -360,6 +360,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     main()
                 if event.key == pygame.K_BACKSPACE:
                     grid.remove()
+                    grid.update()
+                    print(grid)
                     grid_area(num_resistors,num_bulbs,num_switch)
             
             elif click:
@@ -386,9 +388,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             elif dragged_box in ameter:
                                 dragged_object = Wire(is_ameter=True)
                             elif dragged_box in voltage_sources:
-                                dragged_object = VoltageSource(volt=5)
+                                dragged_object = VoltageSource(volt=10)
                             elif dragged_box in current_sources:
-                                dragged_object = CurrentSource(current=1)
+                                dragged_object = CurrentSource(current=0.1)
 
                             if event.type == pygame.TEXTINPUT:
                                 print('down')
@@ -408,9 +410,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             for k, box in enumerate(type):
                                 if box.collidepoint(pos):
                                     if 256 <= box.x <= 896 and 32 <= box.y <= 672:
-                                        print(k)
                                         switch_states[k] = not switch_states[k]
-                                        print(switch_states[k])
                                         x, y = pixel2grid(box.x, box.y)
                                         grid.map[y][x].switch()
                                         grid.update()

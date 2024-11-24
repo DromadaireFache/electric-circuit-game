@@ -312,7 +312,6 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     clock = pygame.time.Clock()
     click = False
     while True:
-        grid.update()
         mouse_pos = pygame.mouse.get_pos()
         # back_fct(mouse_pos)
         for event in pygame.event.get():
@@ -333,6 +332,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                         #dragged_object.col, dragged_object.row = pixel2grid(mouse_x, mouse_y)
                         dragged_object.col, dragged_object.row = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
                         grid.place(dragged_object)
+                        grid.update()
                         print(grid)
                         del dragged_object
                     except:
@@ -379,7 +379,6 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             elif dragged_box in current_sources:
                                 dragged_object = CurrentSource(current=0.1)
 
-                            print(event.type)
                             if event.type == pygame.KEYDOWN:
                                 print('down')
                                 if event.key == pygame.K_r:
@@ -389,6 +388,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
                     x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
                     print('remove:', (y,x))
+                    grid.update()
                     grid.remove((y,x))
 
         draw_grid()

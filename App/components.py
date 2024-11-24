@@ -440,13 +440,13 @@ class Grid:
         for i, node in enumerate(nodes):
             for component in node.components:
                 if type(component) is Wire and component.is_ameter:
-                    if x == None: component.current = 0
+                    if x is None: component.current = 0
                     else: component.get_current(nodes, self, i, x)
                 elif type(component) is Voltmeter:
-                    if x == None: component.voltage = 0
+                    if x is None: component.voltage = 0
                     else: component.get_voltage(nodes, x)
                 elif type(component) is Resistor and component.is_light:
-                    if x == None: component.W = 0
+                    if x is None: component.W = 0
                     else: component.power(nodes, x)
     
 if __name__ == '__main__':
@@ -482,16 +482,14 @@ if __name__ == '__main__':
     # grid.place(Wire((3,8)))
     # grid.place(Wire((3,6)))
 
-    grid.place(CurrentSource((5,5),current=1))
-    grid.place(Wire((5,4),is_ameter=True))
-    grid.place(Wire((5,3)))
-    grid.place(Wire((3,3)))
+    grid.place(Wire((2,2)))
+    grid.place(Wire((3,2)))
+    grid.place(Wire((4,2)))
+    grid.place(Resistor((2,3),is_light=True, res=100))
+    grid.place(VoltageSource((4,3),volt=5))
+    grid.place(Wire((2,4)))
     grid.place(Wire((3,4)))
-    grid.place(Resistor((3,5),res=5))
-    grid.place(Wire((3,6)))
-    grid.place(Wire((4,3)))
-    grid.place(Wire((4,6)))
-    grid.place(Wire((5,6)))
+    grid.place(Wire((4,4)))
 
     nodes = grid.find_nodes()
     for node in nodes: print(node)
@@ -499,9 +497,9 @@ if __name__ == '__main__':
     # print('index:', grid.map[4][4].get_index(grid))
     print(grid)
     # grid.map[4][5].switch()
-    grid.update()
+    # grid.update()
     # print('index:', grid.map[4][4].get_index(grid))
-    print(grid)
+    # print(grid)
 
     # G = G_matrix(nodes)
     # print(G)

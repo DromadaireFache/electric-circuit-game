@@ -6,6 +6,8 @@ from components import *
 
 # Initialize Pygame
 pygame.init()
+pygame.font.init()
+
 grid = Grid(20, 20)
 
 # Screen setup

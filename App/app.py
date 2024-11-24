@@ -89,7 +89,14 @@ def generate_lightning():
 def draw_lightning():
     """Draw the visible lightning segments."""
     for i in range(current_segment_index):
-        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 6)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+
 
 def draw_buttons(mouse_pos):
     for button in button_data:
@@ -245,6 +252,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     # Keep box within screen bounds
                     dragged_box.x = max(0, min(SCREEN_WIDTH - BOX_WIDTH, dragged_box.x))
                     dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
 
             
             elif click:
@@ -327,6 +337,9 @@ def level_screen():
                     back_button = pygame.Rect(20, 20, 100, 50)
                     if back_button.collidepoint(mouse_pos):
                         current_screen = 'levels'
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
         pygame.display.flip()
 
 def pixel2grid(x,y):
@@ -364,6 +377,7 @@ def dev():
 
 
 def main():
+    grid.remove()
     global lightning_segments, current_segment_index, lightning_timer, strike_from_left
     current_screen = "title"
 
@@ -380,6 +394,8 @@ def main():
             if lightning_timer <= 0:
                 if current_segment_index == 0: 
                     lightning_segments = generate_lightning()
+                draw_lightning()
+                draw_lightning()
                 draw_lightning()
 
                 current_segment_index += 1
@@ -407,7 +423,7 @@ def main():
         #elif current_screen == 'nerd_stuff':
             #encyclopedia()
             # back_fct(mouse_pos)
-            pass
+            #pass
             #back_fct(mouse_pos)
             #continue
 

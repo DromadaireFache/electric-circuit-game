@@ -361,6 +361,9 @@ def main():
                     back_button = pygame.Rect(20, 20, 100, 50)
                     if back_button.collidepoint(mouse_pos):
                         current_screen = "title"
+                
+                
+
 
         pygame.display.flip()  # Update the screen
 

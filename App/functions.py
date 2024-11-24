@@ -2,6 +2,9 @@ from components import *
 import pygame
 import sys
 
+pygame.init()
+pygame.font.init()
+
 #   0
 # 1   2
 #   3

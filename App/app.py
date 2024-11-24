@@ -37,6 +37,7 @@ title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
 button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
 general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
 dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
+sandbox_font = pygame.font.Font('Grand9k Pixel.ttf', 16)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')
@@ -138,6 +139,33 @@ def level_fct(mouse_pos, lvl, x):
             if rect.collidepoint(mouse_pos):
                 main()
 
+def draw_description():
+    title = 'SANDBOX'
+    description1 = 'This is where you can try'
+    description2 = 'out your circuits! Have fun!'
+    description3 = 'Wires'
+    description4 = 'Battery'
+    description5 = 'Lightbulb'
+    description6 = 'Switch'
+    description7 = 'Resistor'
+    description8 = 'Current Source'
+    description9 = 'Voltmeter'
+    description10 = 'Ameter'
+    rect_title = pygame.Rect(0,0,256,64)
+    title_surface = button_font.render(title,True,WHITE)
+    title_rect = title_surface.get_rect(center=rect_title.center)
+    screen.blit(title_surface, title_rect)
+    def draw_desc_fct(text,side,height):
+       rect_desc = pygame.Rect(side,height,256,32)
+       desc_surface = desc_surface = sandbox_font.render(text,True,WHITE)
+       desc_rect = desc_surface.get_rect(center=rect_desc.center)
+       screen.blit(desc_surface, desc_rect)
+    draw_desc_fct(description1,0,64)
+    draw_desc_fct(description2,0,88)
+    draw_desc_fct(description3,832,24)
+    draw_desc_fct(description4,960,24)
+    
+
 
 def draw_grid():
     nbr_row = 36
@@ -155,6 +183,8 @@ def draw_grid():
     screen.blit(top_ui, (256,0)) # Top
     screen.blit(bottom_ui, (256,672)) # Bottom
     screen.blit(grid, (256, 32))
+    draw_description()
+
 
 def grid_area(num_resistors, num_bulbs, num_switch):
     wires = []
@@ -162,6 +192,10 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     resistors = []
     bulbs = []
     switches = []
+    voltmeter = []
+    ameter = []
+    voltage_sources = []
+    current_sources = []
     #Component rotations
     component_rotations = []
     def_img_size = (32,32)
@@ -179,6 +213,10 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     switch_on = pygame.transform.scale(pygame.image.load('images/switch/switch on.png'), bulb_img_size)
     switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
     wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
+    voltmeter_im = pygame.transform.scale(pygame.image.load('images/voltmeter/voltmeter both.png'), def_img_size)
+    ameter_im = pygame.transform.scale(pygame.image.load('images/ampmeter/ampmeter both.png'), def_img_size)
+    voltage_source_im = pygame.transform.scale(pygame.image.load('images/battery/battery wire both ends.png'), def_img_size)
+    current_source_im = pygame.transform.scale(pygame.image.load('images/current source/current source both.png'), def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
@@ -204,9 +242,31 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
         wires.append(pygame.Rect(x+150, y, BOX_WIDTH, BOX_HEIGHT))
-        wire_position = (x,y)
     components.append(wires)
     component_rotations.append([False]*len(wires))
+    for i in range(1):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
+        voltmeter.append(pygame.Rect(x+200, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(voltmeter)
+    for i in range(1):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
+        ameter.append(pygame.Rect(x+250, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(ameter)
+    for i in range(2):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
+        voltage_sources.append(pygame.Rect(x+300, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(voltage_sources)
+    component_rotations.append([False]*len(voltage_sources))
+    print(voltage_sources)
+    for i in range(2):
+        x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
+        current_sources.append(pygame.Rect(x+350, y, BOX_WIDTH, BOX_HEIGHT))
+    components.append(current_sources)
+    component_rotations.append([False]*len(current_sources))
 
     #Variables to track dragging state
     dragging = False
@@ -220,15 +280,18 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     clock = pygame.time.Clock()
     click = False
     while True:
+        grid.update()
         mouse_pos = pygame.mouse.get_pos()
         # back_fct(mouse_pos)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                print('click')
                 click = not click
+                print('click')
+                
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -258,32 +321,40 @@ def grid_area(num_resistors, num_bulbs, num_switch):
 
             
             elif click:
+                
                 pos = pygame.mouse.get_pos()
-                print('click')
                 for i, type in enumerate(components):
                     for k, box in enumerate(type):
                         if box.collidepoint(pos):
+                            print('over')
                             dragging = True
                             dragged_box = box
+                            offset_x = box.x - pos[0]
+                            offset_y = box.y - pos[1]
+                            mouse_x, mouse_y = pygame.mouse.get_pos()
                             if dragged_box in resistors:
-                                dragged_object = Resistor(res=100)
+                                dragged_object = Resistor(res = 100, vertical = not component_rotations[i][k])
                             elif dragged_box in bulbs:
-                                dragged_object = Resistor(res = 100, is_light=True)
+                                dragged_object = Resistor(res = 100, is_light=True, vertical = not component_rotations[i][k])
                             elif dragged_box in wires:
                                 dragged_object = Wire()
                             elif dragged_box in switches:
                                 dragged_object = Wire(is_switch=True)
-                            offset_x = box.x - pos[0]
-                            offset_y = box.y - pos[1]
-                            mouse_x, mouse_y = pygame.mouse.get_pos()
+                            elif dragged_box in voltmeter:
+                                dragged_object = Voltmeter()
+                            elif dragged_box in ameter:
+                                dragged_object = Wire(is_ameter=True)
+                            elif dragged_box in voltage_sources:
+                                dragged_object = VoltageSource(volt=5)
+                            elif dragged_box in current_sources:
+                                dragged_object = CurrentSource(current=0.1)
 
                             if event.type == pygame.KEYDOWN:
                                 print('down')
                                 if event.key == pygame.K_r:
                                     component_rotations[i][k] = not component_rotations[i][k]
-                                    print('r_press', component_rotations[i][k])
-                            dragging = True
-                            dragged_box = box
+                                    print('r_press', component_rotations[i][k], i,k)
+                            
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
                                 x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
                                 print('remove:', (y,x))
@@ -296,6 +367,15 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(rotate(bulb_off, 1, i), (bulb.x, bulb.y))
         for i, switch in enumerate(switches):
             screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
+        for i, vol in enumerate(voltmeter):
+            screen.blit(voltmeter_im, (vol.x, vol.y))
+        for i, am in enumerate(ameter):
+            screen.blit(ameter_im, (am.x, am.y))
+        for i, vol in enumerate(voltage_sources):
+            screen.blit(voltage_source_im, (vol.x, vol.y))
+        for i, cur in enumerate(current_sources):
+            screen.blit(current_source_im, (cur.x, cur.y))
+        
         for i, wire in enumerate(wires):
             x, y = pixel2grid(wire.x, wire.y)
             if x == 1 and y == 18:

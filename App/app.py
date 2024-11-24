@@ -217,34 +217,17 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                # for type in components:
-                #     for box in type:
-                #         if box.collidepoint(event.pos):
-                #             dragging = True
-                #             dragged_box = box
-                #             if dragged_box in resistors:
-                #                 dragged_object = Resistor(res=100)
-                #             elif dragged_box in bulbs:
-                #                 dragged_object = Resistor(res = 100, is_light=True)
-                #             elif dragged_box in wires:
-                #                 dragged_object = Wire() 
-                #             elif dragged_box in switches:
-                #                 dragged_object = Wire(is_switch=True)
-                #             offset_x = box.x - event.pos[0]
-                #             offset_y = box.y - event.pos[1]
-                #             mouse_x, mouse_y = pygame.mouse.get_pos()
-                #             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                #                 grid.remove((round((mouse_x-256)/32),round((mouse_y-32)/32)))
-                #             break
                 click = not click
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
+                    print(pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y))
                     try:
-                        dragged_object.row = round((mouse_x-256)/32)
-                        dragged_object.col = round((mouse_y-32)/32)
+                        #dragged_object.col, dragged_object.row = pixel2grid(mouse_x, mouse_y)
+                        dragged_object.col, dragged_object.row = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
                         grid.place(dragged_object)
+                        print(grid)
                         del dragged_object
                     except:
                         pass
@@ -272,7 +255,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             elif dragged_box in bulbs:
                                 dragged_object = Resistor(res = 100, is_light=True)
                             elif dragged_box in wires:
-                                dragged_object = Wire() 
+                                dragged_object = Wire()
                             elif dragged_box in switches:
                                 dragged_object = Wire(is_switch=True)
                             offset_x = box.x - pos[0]
@@ -287,7 +270,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             dragging = True
                             dragged_box = box
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                grid.remove((round((mouse_x-256)/32),round((mouse_y-32)/32)))
+                                grid.remove(pixel2grid(mouse_x,mouse_y))
 
         draw_grid()
         back_fct(mouse_pos)
@@ -330,6 +313,10 @@ def level_screen():
                     if back_button.collidepoint(mouse_pos):
                         current_screen = 'levels'
         pygame.display.flip()
+
+def pixel2grid(x,y):
+    return round((x-256)/32),round((y-32)/32)
+
 def dev():
     main_frame = pygame.image.load('App/images/aboutdev/main frame.png')
     main_frame = pygame.transform.scale(main_frame, (384,192))

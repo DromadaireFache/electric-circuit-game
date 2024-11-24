@@ -37,6 +37,7 @@ offset_x, offset_y = 0, 0
 title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
 button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
 general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
+dev_font_main = pygame.font.Font('App/Grand9k Pixel.ttf', 32)
 
 # Button data for the title screen
 button_image = pygame.image.load('App/images/ui/button_new.png')
@@ -336,12 +337,28 @@ def dev():
     sec_frame = pygame.transform.scale(sec_frame, (384, 96))
     connect_frame = pygame.image.load('images/aboutdev/connection frame.png')
     connect_frame = pygame.transform.scale(connect_frame, (16, 32))
+    #text_surface_main = button_font.render(button["text"], True, WHITE)
+    #text_surface_sec = button_font.render(button["text"], True, WHITE)
+    #text_main = text_surface.get_rect(center=rect.center)
+    #text_sec = text_surface.get_rect(center=rect.center)
+    dev_main_list_fn = ['Charles', 'Thomas', 'Lukas', 'Charles Albert']
+    dev_main_list_ln = ['Benoit', 'Lewis', 'Pons', 'Provencher']
+    dev_sec_list = ['Lead Dev', 'Backend Logic', 'Sandbox Design', 'Sprite and UI Design']
     for i in range(2):
         for j in range(2):
             screen.blit(main_frame, (16 + (420*i),16 + (350*j)))
             screen.blit(connect_frame, (32 + (420*i), 208 + (350*j)))
             screen.blit(connect_frame, (368 + (420*i), 208 + (350*j)))
             screen.blit(sec_frame, (16 + (420*i),240 + (350*j)))
+            text_surface_main_fn = dev_font_main.render(dev_main_list_fn[2*i+j],True,WHITE)
+            text_main_fn_placement = text_surface_main_fn.get_rect(center=pygame.Rect(16 + (420*i),-8+(350*j),384,192).center)
+            text_surface_main_ln = dev_font_main.render(dev_main_list_ln[2*i+j],True,WHITE)
+            text_main_ln_placement = text_surface_main_ln.get_rect(center=pygame.Rect(16 + (420*i),40 + (350*j),384,192).center)
+            text_surface_sec = dev_font_main.render(dev_sec_list[2*i+j],True,WHITE)
+            text_sec_placement = text_surface_sec.get_rect(center = pygame.Rect(16 + (420*i),240 + (350*j),384,96).center)
+            screen.blit(text_surface_main_fn, text_main_fn_placement)
+            screen.blit(text_surface_main_ln, text_main_ln_placement)
+            screen.blit(text_surface_sec, text_sec_placement)
 
 
 def main():

@@ -167,6 +167,8 @@ def draw_description():
     
 
 
+
+
 def draw_grid():
     nbr_row = 36
     nbr_column = 25
@@ -362,6 +364,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                                 grid.remove((y,x))
 
         draw_grid()
+        volt_check = True
+        Amp_check = True
         for i, box in enumerate(resistors):
             screen.blit(rotate(Res100, 0, i), (box.x, box.y))
         for i, bulb in enumerate(bulbs):
@@ -370,8 +374,14 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
         for i, vol in enumerate(voltmeter):
             screen.blit(voltmeter_im, (vol.x, vol.y))
+            if vol.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 350) and vol.y != SCREEN_HEIGHT - BOX_HEIGHT - 20 and volt_check:
+                measure_area(True, False)
+                volt_check = False
         for i, am in enumerate(ameter):
             screen.blit(ameter_im, (am.x, am.y))
+            if am.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 400) and am.y != (SCREEN_HEIGHT - BOX_HEIGHT - 20) and Amp_check:
+                measure_area(False, True)
+                Amp_check = False
         for i, vol in enumerate(voltage_sources):
             screen.blit(voltage_source_im, (vol.x, vol.y))
         for i, cur in enumerate(current_sources):

@@ -101,20 +101,20 @@ def draw_buttons(mouse_pos):
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
 
-def back_fct(mouse_pos):
-    rect = pygame.Rect(16, 700, 250, 60)
-    screen.blit(button_image, (16, 700))
-    if rect.collidepoint(mouse_pos):
-        screen.blit(button_hover_image, rect)
-    else:
-        screen.blit(button_image, rect)
-    text_surface = button_font.render('Back', True, WHITE)
-    text_rect = text_surface.get_rect(center=rect.center)
-    screen.blit(text_surface, text_rect)
-    for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if rect.collidepoint(mouse_pos):
-                main()
+# def back_fct(mouse_pos):
+#     rect = pygame.Rect(16, 700, 250, 60)
+#     screen.blit(button_image, (16, 700))
+#     if rect.collidepoint(mouse_pos):
+#         screen.blit(button_hover_image, rect)
+#     else:
+#         screen.blit(button_image, rect)
+#     text_surface = button_font.render('Back', True, WHITE)
+#     text_rect = text_surface.get_rect(center=rect.center)
+#     screen.blit(text_surface, text_rect)
+#     for event in pygame.event.get():
+#         if event.type == pygame.MOUSEBUTTONDOWN:
+#             if rect.collidepoint(mouse_pos):
+#                 main()
     
 def level_fct(mouse_pos, lvl, x):
     rect = pygame.Rect(x, 350, 250, 250)
@@ -211,7 +211,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     click = False
     while True:
         mouse_pos = pygame.mouse.get_pos()
-        back_fct(mouse_pos)
+        # back_fct(mouse_pos)
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
@@ -274,7 +274,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                                 grid.remove(pixel2grid(mouse_x,mouse_y))
 
         draw_grid()
-        back_fct(mouse_pos)
+        # back_fct(mouse_pos)
         for box in resistors:
             screen.blit(Res100, (box.x, box.y))   
         for bulb in bulbs:
@@ -284,6 +284,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for wire in wires:
             screen.blit(wire_long, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
+
 def level_screen():
     level_button_data = [
         {'Text' : '1', 'rect': pygame.Rect(128,128,250,28), 'screen' : 'lvl 1' },
@@ -295,7 +296,7 @@ def level_screen():
         mouse_pos = pygame.mouse.get_pos()
         level_fct(mouse_pos, '1', 60)
         level_fct(mouse_pos, '2', 500 )
-        back_fct(mouse_pos)
+        # back_fct(mouse_pos)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

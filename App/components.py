@@ -59,7 +59,8 @@ class Wire(Component):
         if self.row > 0 and ignore[0] != -1 and not (self.has_dir and not self.vertical): #add the one above
             component: Component = map[self.row-1][self.col]
             # print(component)
-            if type(self) is type(component) and not (self.is_switch and not self.closed):  #if its a wire continue to make node bigger
+            if type(self) is type(component) and not (self.is_switch and not self.closed) \
+                and not (component.has_dir and not component.vertical):  #if its a wire continue to make node bigger
                 component.makenode(node, map, ignore=(1,0))
 
             elif component != None and component.vertical: #if its another component just add it to node
@@ -73,7 +74,8 @@ class Wire(Component):
         if self.row < rows-1 and ignore[0] != 1 and not (self.has_dir and not self.vertical): #add the one below
             component: Component = map[self.row+1][self.col]
             # print(component)
-            if type(self) is type(component) and not (self.is_switch and not self.closed):
+            if type(self) is type(component) and not (self.is_switch and not self.closed) \
+                and not (component.has_dir and not component.vertical):
                 component.makenode(node, map, ignore=(-1,0))
 
             elif component != None and component.vertical:
@@ -87,7 +89,8 @@ class Wire(Component):
         if self.col > 0 and ignore[1] != -1 and not (self.has_dir and self.vertical): #add the one right
             component: Component = map[self.row][self.col+1]
             # print(component)
-            if type(self) is type(component) and not (self.is_switch and not self.closed):
+            if type(self) is type(component) and not (self.is_switch and not self.closed) \
+                and not (component.has_dir and component.vertical):
                 component.makenode(node, map, ignore=(0,1)) 
 
             elif component != None and not component.vertical:
@@ -101,7 +104,8 @@ class Wire(Component):
         if self.col < cols-1 and ignore[1] != 1 and not (self.has_dir and self.vertical): #add the one left
             component: Component = map[self.row][self.col-1]
             # print(component)
-            if type(self) is type(component) and not (self.is_switch and not self.closed):
+            if type(self) is type(component) and not (self.is_switch and not self.closed) \
+                and not (component.has_dir and component.vertical):
                 component.makenode(node, map, ignore=(0,-1))
 
             elif component != None and not component.vertical:
@@ -135,19 +139,21 @@ class Wire(Component):
             except:
                 pass
         
-        if self.col < cols-1 and ignore[1] != -1 and not (self.has_dir and self.vertical) \
+        if self.col < cols-1 and ignore[1] != 1 and not (self.has_dir and self.vertical) \
             and not (self.is_switch and not self.closed) and not ignore == (0,0): #add the one right
             component: Component = map[self.row][self.col+1]
             try:
-                current += component.get_current(nodes, grid, my_node_index, x, ignore=(0,1))
+                current += component.get_current(nodes, grid, my_node_index, x, ignore=(0,-1))
+                if type(component) is CurrentSource:
+                    print(component, current)
             except:
                 pass
         
-        if self.col > 0 and ignore[1] != 1 and not (self.has_dir and self.vertical) \
+        if self.col > 0 and ignore[1] != -1 and not (self.has_dir and self.vertical) \
             and not (self.is_switch and not self.closed): #add the one left
             component: Component = map[self.row][self.col-1]
             try:
-                current -= component.get_current(nodes, grid, my_node_index, x, ignore=(0,-1))
+                current -= component.get_current(nodes, grid, my_node_index, x, ignore=(0,1))
             except:
                 pass
         
@@ -431,6 +437,7 @@ class Grid:
             x = x_matrix(nodes, self.V_sources())
         except:
             x = None
+        print(x)
         for i, node in enumerate(nodes):
             for component in node.components:
                 if type(component) is Wire and component.is_ameter:
@@ -453,16 +460,9 @@ if __name__ == '__main__':
     # grid.place(Resistor((5,6), True, res=4, is_light=True))
     # grid.place(Resistor((4,7), res=5))
     # grid.place(Resistor((1,1), True, res=100))
-
     # grid.place(CurrentSource((3,1), True, current=1))
-    grid.place(VoltageSource((6,7), volt=-1))
-    grid.place(Wire((5,7), is_ameter=True))
-    grid.place(Wire((5,6)))
-    grid.place(Wire((6,6)))
-    grid.place(Wire((5,8)))
-    grid.place(Wire((6,8)))
+    # grid.place(VoltageSource((6,7), volt=-1))
     # grid.place(Voltmeter((3,7), direction=-1))
-
     # grid.place(Wire((0,0)))
     # grid.place(Wire((2,1)))
     # grid.place(Wire((4,1)))
@@ -482,6 +482,18 @@ if __name__ == '__main__':
     # grid.place(Wire((6,8)))
     # grid.place(Wire((3,8)))
     # grid.place(Wire((3,6)))
+
+    grid.place(CurrentSource((5,5),current=1))
+    grid.place(Wire((5,4),is_ameter=True))
+    grid.place(Wire((5,3)))
+    grid.place(Wire((3,3)))
+    grid.place(Wire((3,4)))
+    grid.place(Resistor((3,5),res=5))
+    grid.place(Wire((3,6)))
+    grid.place(Wire((4,3)))
+    grid.place(Wire((4,6)))
+    grid.place(Wire((5,6)))
+
     nodes = grid.find_nodes()
     for node in nodes: print(node)
     grid.update()

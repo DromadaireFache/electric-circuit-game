@@ -2,6 +2,9 @@ from components import *
 import pygame
 import sys
 
+pygame.init()
+pygame.font.init()
+
 WHITE = (255, 255, 255)
 SCREEN_WIDTH, SCREEN_HEIGHT = 1152, 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

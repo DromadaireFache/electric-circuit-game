@@ -189,11 +189,11 @@ def draw_description(info_list):
 def measure_area(Volt, Amp, voltage = 0, ampage = 0):
     Area = pygame.Rect(300, 300, 256, 64)
     if Volt:
-        voltage = str(voltage) + 'V'
+        voltage = str(round(voltage,2)) + 'V'
         img = general_font.render(voltage, True, BLACK)
         screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT -40))
     if Amp:
-        Amps = str(ampage) + 'A'
+        Amps = str(round(ampage,2)) + 'A'
         img = general_font.render(Amps, True, BLACK)
         screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT - 20 ))
 

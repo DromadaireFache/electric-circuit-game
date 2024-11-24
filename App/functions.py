@@ -27,3 +27,6 @@ def get_wire_sprite(pos: tuple[int,int], grid: Grid):
     component = grid.map[pos[0]][pos[1]]
     if type(component) is Wire and not component.has_dir:
         return WIRE_SPRITES[component.get_index(grid.map)]
+
+def level_screen():
+    pass

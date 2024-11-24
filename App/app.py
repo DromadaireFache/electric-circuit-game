@@ -315,6 +315,10 @@ def main():
             back_text = button_font.render('Back',True,WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
             grid_area(10,10,10)
+        
+        elif current_screen == 'levels':
+            screen.fill(RED)
+            #level_screen()
             
 
         # Event handling
@@ -331,6 +335,9 @@ def main():
                     back_button = pygame.Rect(20, 20, 100, 50)
                     if back_button.collidepoint(mouse_pos):
                         current_screen = "title"
+                
+                
+
 
         pygame.display.flip()  # Update the screen
 

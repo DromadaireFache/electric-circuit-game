@@ -1,4 +1,5 @@
 import pygame
+pygame.init()
 import sys
 import random
 from functions import *
@@ -114,6 +115,20 @@ def back_fct(mouse_pos):
             if rect.collidepoint(mouse_pos):
                 main()
     
+def level_fct(mouse_pos, lvl, x):
+    rect = pygame.Rect(x, 350, 250, 250)
+    screen.blit(button_hover_image, rect)
+    if rect.collidepoint(mouse_pos):
+        screen.blit(button_hover_image, rect)
+    else:
+        screen.blit(button_image, rect)
+    text_surface = button_font.render(lvl, True, WHITE)
+    text_rect = text_surface.get_rect(center=rect.center)
+    screen.blit(text_surface, text_rect)
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if rect.collidepoint(mouse_pos):
+                main()
 
 
 def draw_grid():
@@ -293,12 +308,9 @@ def level_screen():
     while True:
         current_screen = 'levels'
         mouse_pos = pygame.mouse.get_pos()
-        for level in level_button_data:
-            rect = level["rect"]
-            text_surface = button_font.render(level["Text"], True, WHITE)
-            text_rect = text_surface.get_rect(center=rect.center)
-            screen.blit(text_surface, text_rect)
-        
+        level_fct(mouse_pos, '1', 60)
+        level_fct(mouse_pos, '2', 500 )
+        back_fct(mouse_pos)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

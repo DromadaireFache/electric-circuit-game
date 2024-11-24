@@ -43,8 +43,8 @@ dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')
 button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
-button_image = pygame.image.load('images/ui/button_new.png')
-button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
+level_button = pygame.image.load('images/ui/level_button.png')
+level_button_hover = pygame.image.load('images/ui/level_button_hover.png')
 button_data = [
    {"text": "Sandbox", "rect": pygame.Rect(451, 250, 250, 60), "screen": "sandbox"},
    {"text": "Level Select", "rect": pygame.Rect(451, 340, 250, 60), "screen": "levels"},
@@ -121,11 +121,10 @@ def draw_buttons(mouse_pos):
     
 def level_fct(mouse_pos, lvl, x):
     rect = pygame.Rect(x, 350, 250, 250)
-    screen.blit(button_hover_image, rect)
     if rect.collidepoint(mouse_pos):
-        screen.blit(button_hover_image, rect)
+        screen.blit(level_button_hover, (x,350))
     else:
-        screen.blit(button_image, rect)
+        screen.blit(level_button, (x,350))
     text_surface = button_font.render(lvl, True, WHITE)
     text_rect = text_surface.get_rect(center=rect.center)
     screen.blit(text_surface, text_rect)
@@ -407,13 +406,14 @@ def main():
             level_screen()
             back_fct(mouse_pos)
         
-        elif current_screen == 'nerd_stuff':
+        #elif current_screen == 'nerd_stuff':
             #encyclopedia()
-            back_fct(mouse_pos)
+            #back_fct(mouse_pos)
+            #continue
 
         elif current_screen == 'devs':
             dev()
-            back_fct(mouse_pos)
+            #back_fct(mouse_pos)
 
         elif current_screen == 'quit':
             pygame.quit()

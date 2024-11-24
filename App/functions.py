@@ -15,7 +15,7 @@ general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
 #   3
 
 WIRE_SPRITES = [
-    pygame.image.load('images/wires/wire null.png'),
+    pygame.image.load('App/images/wires/wire null.png'),
     pygame.transform.rotate(pygame.image.load('images/wires/wire single connect.png'), 0),
     pygame.transform.rotate(pygame.image.load('images/wires/wire single connect.png'), 0),
     pygame.transform.rotate(pygame.image.load('images/wires/wire curved.png'), 180),

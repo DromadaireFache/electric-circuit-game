@@ -331,11 +331,11 @@ def level_screen():
                         current_screen = 'levels'
         pygame.display.flip()
 def dev():
-    main_frame = pygame.image.load('images/aboutdev/main frame.png')
+    main_frame = pygame.image.load('App/images/aboutdev/main frame.png')
     main_frame = pygame.transform.scale(main_frame, (384,192))
-    sec_frame = pygame.image.load('images/aboutdev/sec frame.png')
+    sec_frame = pygame.image.load('App/images/aboutdev/sec frame.png')
     sec_frame = pygame.transform.scale(sec_frame, (384, 96))
-    connect_frame = pygame.image.load('images/aboutdev/connection frame.png')
+    connect_frame = pygame.image.load('App/images/aboutdev/connection frame.png')
     connect_frame = pygame.transform.scale(connect_frame, (16, 32))
     #text_surface_main = button_font.render(button["text"], True, WHITE)
     #text_surface_sec = button_font.render(button["text"], True, WHITE)

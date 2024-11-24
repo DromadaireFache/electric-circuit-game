@@ -208,9 +208,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     offset_x, offset_y = 0, 0
 
     def rotate(sprite, i, k):
-        if component_rotations[i][k] == True:
-            sprite = pygame.transform.rotate(sprite, 90)
-        return sprite
+        return pygame.transform.rotate(sprite, 90) if component_rotations[i][k] else sprite
 
     # Main loop for the sandbox
     clock = pygame.time.Clock()
@@ -278,7 +276,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             dragging = True
                             dragged_box = box
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                x, y = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
+                                x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
                                 print('remove:', (y,x))
                                 grid.remove((y,x))
 

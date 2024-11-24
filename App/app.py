@@ -220,7 +220,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(switch_off, (switch.x, switch.y))
         for wire in wires:
             screen.blit(wire_long, (wire.x, wire.y))
-            
+        pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)   
         pygame.display.flip()  # Update the screen
         
 
@@ -259,6 +259,7 @@ def main():
             back_text = button_font.render('Back',True,WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
             grid_area(10,10,10)
+            
             
 
         # Event handling

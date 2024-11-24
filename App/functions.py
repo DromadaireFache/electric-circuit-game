@@ -30,15 +30,23 @@ WIRE_SPRITES = [
 
 def get_wire_sprite(pos: tuple[int,int], grid: Grid):
     try:
-        x, y = pos
-        # if x == 2 and y == 2:
-            # print(grid.map[x][y].get_index(grid))
         component = grid.map[pos[1]][pos[0]]
         if type(component) is Wire and not component.has_dir:
-            # if component.get_index(grid) == 15: print("gyatt")
             return WIRE_SPRITES[component.get_index(grid)]
     except: pass
 
+def get_light_sprite(pos: tuple[int,int], grid: Grid):
+    try:
+        power = grid.map[pos[1]][pos[0]].W
+        off = pygame.image.load('images/lightbulb off/lightbulb off left right.png')
+        if power > 0:
+            bulb = pygame.image.load('images/lightbulb on/lightbulb on left right.png')
+            bulb.set_alpha(round(power*256))
+            off.blit(bulb, (0,0))
+            return off
+        else:
+            return off
+    except: pass
 
 
 

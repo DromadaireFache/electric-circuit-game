@@ -41,11 +41,13 @@ def get_light_sprite(pos: tuple[int,int], grid: Grid):
         off = pygame.image.load('images/lightbulb off/lightbulb off left right.png')
         if power > 0:
             bulb = pygame.image.load('images/lightbulb on/lightbulb on left right.png')
-            bulb.set_alpha(round(power*256))
+            bulb.set_alpha(min(round(power*256)+90,255))
             off.blit(bulb, (0,0))
-            return off
-        else:
-            return off
+            light = pygame.image.load('images/lightbulb on/lightbulb intensity.png')
+            light = pygame.transform.scale(light, (bulb.get_width()*2, bulb.get_height()*2))
+            light.set_alpha(min(round(power*256),255))
+            off.blit(light, (-128,-128))
+        return off
     except: pass
 
 

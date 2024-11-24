@@ -359,7 +359,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main()
-
+                if event.key == pygame.K_BACKSPACE:
+                    grid.remove()
+                    grid_area(num_resistors,num_bulbs,num_switch)
             
             elif click:
                 pos = pygame.mouse.get_pos()
@@ -419,7 +421,12 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for i, box in enumerate(resistors):
             screen.blit(rotate(Res100, 0, i), (box.x, box.y))
         for i, bulb in enumerate(bulbs):
-            screen.blit(rotate(bulb_off, 1, i), (bulb.x, bulb.y))
+            bulb_sprite = get_light_sprite(pixel2grid(bulb.x, bulb.y), grid)
+            if bulb_sprite == None:
+                bulb_sprite = bulb_off
+            else:
+                bulb_sprite = pygame.transform.scale(bulb_sprite, def_img_size)
+            screen.blit(rotate(bulb_sprite, 1, i), (bulb.x, bulb.y))
         for i, switch in enumerate(switches):
             screen.blit(rotate(flip_switch(i), 2, i), (switch.x, switch.y))
         for i, vol in enumerate(voltmeter):
@@ -444,9 +451,6 @@ def grid_area(num_resistors, num_bulbs, num_switch):
             screen.blit(current_source_im, (cur.x, cur.y))
         
         for i, wire in enumerate(wires):
-            x, y = pixel2grid(wire.x, wire.y)
-            if x == 1 and y == 18:
-                print(grid.map[x][y])
             wire_sprite = get_wire_sprite(pixel2grid(wire.x, wire.y), grid)
             if wire_sprite == None:
                 wire_sprite = wire_long

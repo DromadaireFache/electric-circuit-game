@@ -516,8 +516,10 @@ def main():
             screen.blit(title_surface, title_rect)
             warning_sign1 = pygame.image.load('images/ui/warning sign.png')
             warning_sign2 = pygame.image.load('images/ui/warning sign 2.png')
+            fence = pygame.image.load('images/ui/fence.png')
             screen.blit(warning_sign1, (880,564))
             screen.blit(warning_sign2, (60,436))
+            screen.blit(fence, (0,624))
 
             draw_buttons(mouse_pos)
             if lightning_timer <= 0:

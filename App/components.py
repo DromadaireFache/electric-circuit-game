@@ -233,8 +233,8 @@ class Resistor(Component):
     def __str__(self):
         return f"Light {self.R}{self.UNITS}" if self.is_light else f"Res. {self.R}{self.UNITS}"
     
-    def W(self, I):
-        return I/self.R**2
+    # def power(self, current):
+    #     return current/self.R**2
     
     def get_current(self, nodes: list[Node], grid, my_node_index: int, x, ignore=(0,0)):
         if my_node_index == 0:
@@ -247,7 +247,7 @@ class Resistor(Component):
                 if i == 0:
                     return - x[my_node_index] / self.R
                 return (x[i-1] - my_voltage) / self.R
-
+    
 class Voltmeter(Component):
     UNITS = 'V'
     def __init__(self, pos=(0, 0), vertical=False, direction=1) -> None:

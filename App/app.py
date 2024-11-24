@@ -1,6 +1,4 @@
 import pygame
-pygame.init()
-pygame.font.init()
 import sys
 import random
 from functions import *
@@ -39,12 +37,13 @@ title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
 button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
 general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
 dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
+sandbox_font = pygame.font.Font('Grand9k Pixel.ttf', 16)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')
 button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
-button_image = pygame.image.load('images/ui/button_new.png')
-button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
+level_button = pygame.image.load('images/ui/level_button.png')
+level_button_hover = pygame.image.load('images/ui/level_button_hover.png')
 button_data = [
    {"text": "Sandbox", "rect": pygame.Rect(451, 250, 250, 60), "screen": "sandbox"},
    {"text": "Level Select", "rect": pygame.Rect(451, 340, 250, 60), "screen": "levels"},
@@ -91,7 +90,14 @@ def generate_lightning():
 def draw_lightning():
     """Draw the visible lightning segments."""
     for i in range(current_segment_index):
-        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 6)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+
 
 def draw_buttons(mouse_pos):
     for button in button_data:
@@ -121,11 +127,10 @@ def draw_buttons(mouse_pos):
     
 def level_fct(mouse_pos, lvl, x):
     rect = pygame.Rect(x, 350, 250, 250)
-    screen.blit(button_hover_image, rect)
     if rect.collidepoint(mouse_pos):
-        screen.blit(button_hover_image, rect)
+        screen.blit(level_button_hover, (x,350))
     else:
-        screen.blit(button_image, rect)
+        screen.blit(level_button, (x,350))
     text_surface = button_font.render(lvl, True, WHITE)
     text_rect = text_surface.get_rect(center=rect.center)
     screen.blit(text_surface, text_rect)
@@ -133,6 +138,22 @@ def level_fct(mouse_pos, lvl, x):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if rect.collidepoint(mouse_pos):
                 main()
+
+def draw_description():
+    title = 'SANDBOX'
+    description1 = 'This is where you can try'
+    description2 =  'out your circuits! Have fun!'
+    rect_title = pygame.Rect(0,0,256,64)
+    title_surface = button_font.render(title,True,WHITE)
+    title_rect = title_surface.get_rect(center=rect_title.center)
+    screen.blit(title_surface, title_rect)
+    def draw_description_fct(text,side,height):
+       rect_desc = pygame.Rect(0,height,256,32)
+       desc_surface = desc_surface = sandbox_font.render(text,True,WHITE)
+       desc_rect = desc_surface.get_rect(center=rect_desc.center)
+       screen.blit(desc_surface, desc_rect)
+    draw_description_fct(description1,0,64)
+    draw_description_fct(description2,0,88)
 
 
 def draw_grid():
@@ -151,6 +172,8 @@ def draw_grid():
     screen.blit(top_ui, (256,0)) # Top
     screen.blit(bottom_ui, (256,672)) # Bottom
     screen.blit(grid, (256, 32))
+    draw_description()
+
 
 def grid_area(num_resistors, num_bulbs, num_switch):
     wires = []
@@ -240,12 +263,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     offset_x, offset_y = 0, 0
 
     def rotate(sprite, i, k):
-        if sprite == ameter_im:
-            #print(component_rotations[3])
-            pass
-        if component_rotations[i][k] == True:
-            sprite = pygame.transform.rotate(sprite, 90)
-        return sprite
+        return pygame.transform.rotate(sprite, 90) if component_rotations[i][k] else sprite
 
     # Main loop for the sandbox
     clock = pygame.time.Clock()
@@ -286,6 +304,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     # Keep box within screen bounds
                     dragged_box.x = max(0, min(SCREEN_WIDTH - BOX_WIDTH, dragged_box.x))
                     dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
 
             
             elif click:
@@ -324,7 +345,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                                     print('r_press', component_rotations[i][k], i,k)
                             
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                grid.remove(pixel2grid(mouse_x,mouse_y))
+                                x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
+                                print('remove:', (y,x))
+                                grid.remove((y,x))
 
         draw_grid()
         for i, box in enumerate(resistors):
@@ -383,6 +406,9 @@ def level_screen():
                     back_button = pygame.Rect(20, 20, 100, 50)
                     if back_button.collidepoint(mouse_pos):
                         current_screen = 'levels'
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
         pygame.display.flip()
 
 def pixel2grid(x,y):
@@ -420,6 +446,7 @@ def dev():
 
 
 def main():
+    grid.remove()
     global lightning_segments, current_segment_index, lightning_timer, strike_from_left
     current_screen = "title"
 
@@ -436,6 +463,8 @@ def main():
             if lightning_timer <= 0:
                 if current_segment_index == 0: 
                     lightning_segments = generate_lightning()
+                draw_lightning()
+                draw_lightning()
                 draw_lightning()
 
                 current_segment_index += 1
@@ -458,15 +487,19 @@ def main():
         elif current_screen == 'levels':
             screen.fill(RED)
             level_screen()
-            back_fct(mouse_pos)
+            # back_fct(mouse_pos)
         
-        elif current_screen == 'nerd_stuff':
+        #elif current_screen == 'nerd_stuff':
             #encyclopedia()
-            back_fct(mouse_pos)
+            # back_fct(mouse_pos)
+            #pass
+            #back_fct(mouse_pos)
+            #continue
 
         elif current_screen == 'devs':
             dev()
-            back_fct(mouse_pos)
+            #back_fct(mouse_pos)
+            # back_fct(mouse_pos)
 
         elif current_screen == 'quit':
             pygame.quit()

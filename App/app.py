@@ -33,10 +33,10 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
-button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
-general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
-dev_font_main = pygame.font.Font('App/Grand9k Pixel.ttf', 32)
+title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
+general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
+dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')

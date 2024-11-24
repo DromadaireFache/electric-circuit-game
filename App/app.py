@@ -166,6 +166,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     switch_on = pygame.transform.scale(pygame.image.load('App/images/switch/switch on.png'), bulb_img_size)
     switch_off = pygame.transform.scale(pygame.image.load('App/images/switch/switch off.png'), def_img_size)
     wire_long = pygame.transform.scale(pygame.image.load('App/images/wires/wire line.png'), def_img_size)
+    Volt = pygame.transform.scale(pygame.image.load('App/images/wires/wire line.png'), def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
@@ -357,7 +358,7 @@ def main():
         screen.fill(BLACK)
 
         if current_screen == "title":
-            title_surface = title_font.render("Lights Out", True, WHITE)
+            title_surface = title_font.render("Lights Out!", True, WHITE)
             title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 100))
             screen.blit(title_surface, title_rect)
 
@@ -390,6 +391,7 @@ def main():
             back_fct(mouse_pos)
         
         elif current_screen == 'nerd_stuff':
+            #encyclopedia()
             back_fct(mouse_pos)
 
         elif current_screen == 'devs':

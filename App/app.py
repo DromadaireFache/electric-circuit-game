@@ -321,13 +321,11 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     main()
 
             
-            elif click:
-                
+            elif click:                
                 pos = pygame.mouse.get_pos()
                 for i, type in enumerate(components):
                     for k, box in enumerate(type):
                         if box.collidepoint(pos):
-                            print('over')
                             dragging = True
                             dragged_box = box
                             offset_x = box.x - pos[0]
@@ -350,16 +348,17 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             elif dragged_box in current_sources:
                                 dragged_object = CurrentSource(current=0.1)
 
+                            print(event.type)
                             if event.type == pygame.KEYDOWN:
                                 print('down')
                                 if event.key == pygame.K_r:
                                     component_rotations[i][k] = not component_rotations[i][k]
                                     print('r_press', component_rotations[i][k], i,k)
                             
-                            if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
-                                print('remove:', (y,x))
-                                grid.remove((y,x))
+                if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
+                    x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
+                    print('remove:', (y,x))
+                    grid.remove((y,x))
 
         draw_grid()
         for i, box in enumerate(resistors):

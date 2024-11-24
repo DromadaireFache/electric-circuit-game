@@ -234,10 +234,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
     Res100 = pygame.transform.scale(Res100, def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
-    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
-    # switch_on = pygame.transform.scale(pygame.image.load('images/switch/new switch on.png'), def_img_size)
-    # switch_off = pygame.transform.scale(pygame.image.load('images/switch/new switch off.png'), def_img_size)
-    
+    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size) 
     wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     Volt = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
@@ -294,7 +291,6 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         voltage_sources.append(pygame.Rect(x+300, y, BOX_WIDTH, BOX_HEIGHT))
     components.append(voltage_sources)
     component_rotations.append([False]*len(voltage_sources))
-    print(voltage_sources)
     for i in range(2):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
@@ -330,14 +326,11 @@ def grid_area(num_resistors, num_bulbs, num_switch):
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 click = not click
-                print('click')
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                    print(pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y))
                     try:
-                        #dragged_object.col, dragged_object.row = pixel2grid(mouse_x, mouse_y)
                         dragged_object.col, dragged_object.row = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
                         grid.place(dragged_object)
                         grid.update()
@@ -393,15 +386,13 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                                 dragged_object = CurrentSource(current=0.1)
 
                             if event.type == pygame.TEXTINPUT:
-                                print('down')
                                 if event.text == 'r':
                                     component_rotations[i][k] = not component_rotations[i][k]
-                                    print('r_press', component_rotations[i][k], i,k)
 
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
                                 x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
-                                print('remove:', (y,x))
                                 grid.remove((y,x))
+
             elif event.type == pygame.TEXTINPUT:
                 if event.text == ' ':
                     for type in components:

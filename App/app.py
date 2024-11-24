@@ -11,7 +11,7 @@ grid = Grid(20, 20)
 # Screen setup
 SCREEN_WIDTH, SCREEN_HEIGHT = 1152, 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Lights Out with Lightning Animation")
+pygame.display.set_caption("Lights Out!" + u"\U0001F61B")
 
 # Colors
 WHITE = (255, 255, 255)
@@ -51,7 +51,6 @@ current_segment_index = 0
 strike_interval = 200  # Interval between strikes
 lightning_timer = 0
 strike_from_left = True  # Alternates between left and right
-
 
 def generate_lightning():
     if strike_from_left:
@@ -96,6 +95,7 @@ def draw_buttons(mouse_pos):
         text_surface = button_font.render(button["text"], True, WHITE)
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
+
 
 
 def draw_grid():

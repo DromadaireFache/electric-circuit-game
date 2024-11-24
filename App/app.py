@@ -90,7 +90,14 @@ def generate_lightning():
 def draw_lightning():
     """Draw the visible lightning segments."""
     for i in range(current_segment_index):
-        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 6)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+        pygame.draw.line(screen, LIGHTNING_COLOR, lightning_segments[i], lightning_segments[i + 1], 10)
+
 
 def draw_buttons(mouse_pos):
     for button in button_data:
@@ -226,9 +233,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     offset_x, offset_y = 0, 0
 
     def rotate(sprite, i, k):
-        if component_rotations[i][k] == True:
-            sprite = pygame.transform.rotate(sprite, 90)
-        return sprite
+        return pygame.transform.rotate(sprite, 90) if component_rotations[i][k] else sprite
 
     # Main loop for the sandbox
     clock = pygame.time.Clock()
@@ -266,6 +271,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     # Keep box within screen bounds
                     dragged_box.x = max(0, min(SCREEN_WIDTH - BOX_WIDTH, dragged_box.x))
                     dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
 
             
             elif click:
@@ -296,7 +304,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             dragging = True
                             dragged_box = box
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                x, y = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
+                                x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
                                 print('remove:', (y,x))
                                 grid.remove((y,x))
 
@@ -348,6 +356,9 @@ def level_screen():
                     back_button = pygame.Rect(20, 20, 100, 50)
                     if back_button.collidepoint(mouse_pos):
                         current_screen = 'levels'
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
         pygame.display.flip()
 
 def pixel2grid(x,y):
@@ -385,6 +396,7 @@ def dev():
 
 
 def main():
+    grid.remove()
     global lightning_segments, current_segment_index, lightning_timer, strike_from_left
     current_screen = "title"
 
@@ -401,6 +413,8 @@ def main():
             if lightning_timer <= 0:
                 if current_segment_index == 0: 
                     lightning_segments = generate_lightning()
+                draw_lightning()
+                draw_lightning()
                 draw_lightning()
 
                 current_segment_index += 1
@@ -428,7 +442,7 @@ def main():
         #elif current_screen == 'nerd_stuff':
             #encyclopedia()
             # back_fct(mouse_pos)
-            pass
+            #pass
             #back_fct(mouse_pos)
             #continue
 

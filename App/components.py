@@ -163,8 +163,7 @@ class Wire(Component):
         if self.row > 0 and not (self.is_switch and not self.closed): #add the one above
             component: Component | Wire = map[self.row-1][self.col]
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                if not (component.has_dir and not component.vertical) \
-                    and not (component.is_switch and not component.closed):
+                if not (component.has_dir and not component.vertical):
                     index |= 1
             elif component != None and component.vertical: #if its another component just add it to node
                 index |= 1
@@ -172,8 +171,7 @@ class Wire(Component):
         if self.row < rows-1 and not (self.is_switch and not self.closed): #add the one below
             component: Component | Wire = map[self.row+1][self.col]
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                if not (component.has_dir and not component.vertical) \
-                    and not (component.is_switch and not component.closed):
+                if not (component.has_dir and not component.vertical):
                     index |= 2
             elif component != None and component.vertical: #if its another component just add it to node
                 index |= 2
@@ -181,8 +179,7 @@ class Wire(Component):
         if self.col < cols-1 and not (self.is_switch and not self.closed): #add the one right
             component: Component | Wire = map[self.row][self.col+1]
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                if not (component.has_dir and component.vertical) \
-                    and not (component.is_switch and not component.closed):
+                if not (component.has_dir and component.vertical):
                     index |= 4
             elif component != None and not component.vertical: #if its another component just add it to node
                 index |= 4
@@ -190,8 +187,7 @@ class Wire(Component):
         if self.col > 0 and not (self.is_switch and not self.closed): #add the one left
             component: Component | Wire = map[self.row][self.col-1]
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                if not (component.has_dir and component.vertical) \
-                    and not (component.is_switch and not component.closed):
+                if not (component.has_dir and component.vertical):
                     index |= 8
             elif component != None and not component.vertical: #if its another component just add it to node
                 index |= 8
@@ -230,12 +226,14 @@ class Resistor(Component):
         super().__init__(pos, vertical)
         self.R = res
         self.is_light = is_light
+        if is_light:
+            self.W = 0
 
     def __str__(self):
-        return f"Light {self.R}{self.UNITS}" if self.is_light else f"Res. {self.R}{self.UNITS}"
+        return f"Light {self.W:.2f}W" if self.is_light else f"Res. {self.R}{self.UNITS}"
     
-    # def power(self, current):
-    #     return current/self.R**2
+    def power(self, nodes: list[Node], x):
+        self.W = self.get_voltage(nodes, x)**2/self.R
     
     def get_current(self, nodes: list[Node], grid, my_node_index: int, x, ignore=(0,0)):
         if my_node_index == 0:
@@ -248,6 +246,23 @@ class Resistor(Component):
                 if i == 0:
                     return - x[my_node_index] / self.R
                 return (x[i-1] - my_voltage) / self.R
+    
+    def get_voltage(self, nodes: list[Node], x):
+        first_node = -1
+        second_node = -1
+        for i, node in enumerate(nodes):
+            if self in node:
+                if first_node == -1:
+                    first_node = i
+                else:
+                    second_node = i
+                    break
+        if second_node == -1:
+            return 0
+        
+        volt1 = 0 if first_node == 0 else x[first_node-1]
+        volt2 = 0 if second_node == 0 else x[second_node-1]
+        return volt2 - volt1
     
 class Voltmeter(Component):
     UNITS = 'V'
@@ -418,9 +433,12 @@ class Grid:
                     component.get_current(nodes, self, i, x)
                 elif type(component) is Voltmeter:
                     component.get_voltage(nodes, x)
+                elif type(component) is Resistor and component.is_light:
+                    component.power(nodes, x)
     
 if __name__ == '__main__':
     grid = Grid(11, 11)
+    Grid.DISSIZE = 12
     
     grid.place(Resistor((3,2), True, res=1))
     grid.place(Resistor((3,4), True, res=2))

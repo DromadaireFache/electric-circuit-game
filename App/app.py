@@ -22,7 +22,7 @@ BUTTON_HOVER_COLOR = (0, 150, 250)
 LIGHTNING_COLOR = (255, 255, 0)  # Yellow lightning
 
 #Stuff Relating to Drag Mechanic
-BOX_WIDTH, BOX_HEIGHT = 30, 30
+BOX_WIDTH, BOX_HEIGHT = 32, 32
 BOX_SPACING = 20
 num_boxes = 5
 
@@ -41,8 +41,8 @@ button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_data = [
    {"text": "Sandbox", "rect": pygame.Rect(451, 250, 250, 60), "screen": "sandbox"},
    {"text": "Level Select", "rect": pygame.Rect(451, 350, 250, 60), "screen": "levels"},
-   {"text": "Encyclopedia", "rect": pygame.Rect(451, 450, 250, 60), "screen": "white"},
-   {"text": "About the Devs", "rect": pygame.Rect(451, 550, 250, 60), "screen": "yellow"},
+   {"text": "Encyclopedia", "rect": pygame.Rect(451, 450, 250, 60), "screen": "nerd_stuff"},
+   {"text": "About the Devs", "rect": pygame.Rect(451, 550, 250, 60), "screen": "devs"},
 ]
 
 # Lightning parameters
@@ -99,7 +99,6 @@ def draw_buttons(mouse_pos):
 
 
 def draw_grid():
-    """Draw a 20x20 grid."""
     nbr_row = 36
     nbr_column = 25
     for x in range(0, SCREEN_WIDTH, SCREEN_WIDTH // nbr_row):
@@ -117,7 +116,6 @@ def draw_grid():
     screen.blit(grid, (256, 32))
 
 def grid_area(num_resistors, num_bulbs, num_switch):
-    # Create resistor boxes along the bottom
     wires = []
     components = []
     resistors = []
@@ -131,32 +129,33 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     Res100 = pygame.transform.scale(Res100, def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
     bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
+    switch_on = pygame.transform.scale(pygame.image.load('images/switch/switch on.png'), bulb_img_size)
     switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
     wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
-        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
         resistor_position = (x,y)
         resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
     components.append(resistors)
     component_rotations.append([False]*len(resistors))
     for i in range(num_bulbs):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
-        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
         bulb_position = (x,y)
         bulbs.append(pygame.Rect(x+50, y  , BOX_WIDTH, BOX_HEIGHT))
     components.append(bulbs)
     component_rotations.append([False]*len(bulbs))
     for i in range(num_switch):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
-        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
         switches.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
         switch_position = (x,y)
     components.append(switches)
     component_rotations.append([False]*len(switches))
     for i in range(200):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
-        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
+        y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
         wires.append(pygame.Rect(x+150, y, BOX_WIDTH, BOX_HEIGHT))
         wire_position = (x,y)
     components.append(wires)
@@ -264,7 +263,21 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for i, wire in enumerate(wires):
             screen.blit(rotate(wire_long, 3, i), (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
-        
+
+def dev():
+    main_frame = pygame.image.load('images/aboutdev/main frame.png')
+    main_frame = pygame.transform.scale(main_frame, (384,192))
+    sec_frame = pygame.image.load('images/aboutdev/sec frame.png')
+    sec_frame = pygame.transform.scale(sec_frame, (384, 96))
+    connect_frame = pygame.image.load('images/aboutdev/connection frame.png')
+    connect_frame = pygame.transform.scale(connect_frame, (16, 32))
+    for i in range(2):
+        for j in range(2):
+            screen.blit(main_frame, (16 + (420*i),16 + (380*j)))
+            screen.blit(connect_frame, (32 + (420*i), 208 + (380*j)))
+            screen.blit(connect_frame, (368 + (420*i), 208 + (380*j)))
+            screen.blit(sec_frame, (16 + (420*i),240 + (380*j)))
+
 
 
 def main():
@@ -273,7 +286,7 @@ def main():
 
     while True:
         mouse_pos = pygame.mouse.get_pos()
-        screen.fill(BLACK if current_screen == "title" else WHITE)
+        screen.fill(BLACK)
 
         if current_screen == "title":
             title_surface = title_font.render("Lights Out", True, WHITE)
@@ -301,6 +314,10 @@ def main():
             back_text = button_font.render('Back',True,WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
             grid_area(10,10,10)
+
+        elif current_screen == 'devs':
+            dev()
+
             
 
         # Event handling
@@ -319,7 +336,6 @@ def main():
                         current_screen = "title"
 
         pygame.display.flip()  # Update the screen
-
 
 if __name__ == "__main__":
     main()

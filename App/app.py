@@ -161,6 +161,12 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     bulb_img_size = (60,60)
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
     Res100 = pygame.transform.scale(Res100, def_img_size)
+    bulb_off = pygame.transform.scale(pygame.image.load('App/images/lightbulb off/lightbulb off left right.png'), def_img_size)
+    bulb_on = pygame.transform.scale(pygame.image.load('App/images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
+    switch_on = pygame.transform.scale(pygame.image.load('App/images/switch/switch on.png'), bulb_img_size)
+    switch_off = pygame.transform.scale(pygame.image.load('App/images/switch/switch off.png'), def_img_size)
+    wire_long = pygame.transform.scale(pygame.image.load('App/images/wires/wire line.png'), def_img_size)
+    Volt = pygame.transform.scale(pygame.image.load('App/images/wires/wire line.png'), def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
     bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
     switch_on = pygame.transform.scale(pygame.image.load('images/switch/switch on.png'), bulb_img_size)
@@ -357,7 +363,7 @@ def main():
         screen.fill(BLACK)
 
         if current_screen == "title":
-            title_surface = title_font.render("Lights Out", True, WHITE)
+            title_surface = title_font.render("Lights Out!", True, WHITE)
             title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 100))
             screen.blit(title_surface, title_rect)
 
@@ -390,6 +396,7 @@ def main():
             back_fct(mouse_pos)
         
         elif current_screen == 'nerd_stuff':
+            #encyclopedia()
             back_fct(mouse_pos)
 
         elif current_screen == 'devs':

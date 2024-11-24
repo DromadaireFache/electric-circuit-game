@@ -40,9 +40,10 @@ button_image = pygame.image.load('App/images/ui/button_new.png')
 button_hover_image = pygame.image.load('App/images/ui/button_hover_new.png')
 button_data = [
    {"text": "Sandbox", "rect": pygame.Rect(451, 250, 250, 60), "screen": "sandbox"},
-   {"text": "Level Select", "rect": pygame.Rect(451, 350, 250, 60), "screen": "levels"},
-   {"text": "Encyclopedia", "rect": pygame.Rect(451, 450, 250, 60), "screen": "nerd_stuff"},
-   {"text": "About the Devs", "rect": pygame.Rect(451, 550, 250, 60), "screen": "devs"},
+   {"text": "Level Select", "rect": pygame.Rect(451, 340, 250, 60), "screen": "levels"},
+   {"text": "Encyclopedia", "rect": pygame.Rect(451, 430, 250, 60), "screen": "nerd_stuff"},
+   {"text": "About the Devs", "rect": pygame.Rect(451, 520, 250, 60), "screen": "devs"}, 
+   {"text": "Quit", "rect":pygame.Rect(451, 610, 250, 60), 'screen': 'quit'}
 ]
 
 # Lightning parameters
@@ -343,8 +344,9 @@ def main():
             dev()
             back_fct(mouse_pos)
 
-            
-
+        elif current_screen == 'quit':
+            pygame.quit()
+            sys.exit()
         # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

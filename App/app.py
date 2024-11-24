@@ -11,7 +11,7 @@ grid = Grid(20, 20)
 # Screen setup
 SCREEN_WIDTH, SCREEN_HEIGHT = 1152, 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Lights Out with Lightning Animation")
+pygame.display.set_caption("Lights Out!" + u"\U0001F61B")
 
 # Colors
 WHITE = (255, 255, 255)

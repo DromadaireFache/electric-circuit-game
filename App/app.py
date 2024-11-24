@@ -22,7 +22,7 @@ BUTTON_HOVER_COLOR = (0, 150, 250)
 LIGHTNING_COLOR = (255, 255, 0)  # Yellow lightning
 
 #Stuff Relating to Drag Mechanic
-BOX_WIDTH, BOX_HEIGHT = 30, 30
+BOX_WIDTH, BOX_HEIGHT = 32, 32
 BOX_SPACING = 20
 num_boxes = 5
 
@@ -41,8 +41,8 @@ button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_data = [
    {"text": "Sandbox", "rect": pygame.Rect(451, 250, 250, 60), "screen": "sandbox"},
    {"text": "Level Select", "rect": pygame.Rect(451, 350, 250, 60), "screen": "levels"},
-   {"text": "Encyclopedia", "rect": pygame.Rect(451, 450, 250, 60), "screen": "white"},
-   {"text": "About the Devs", "rect": pygame.Rect(451, 550, 250, 60), "screen": "yellow"},
+   {"text": "Encyclopedia", "rect": pygame.Rect(451, 450, 250, 60), "screen": "nerd_stuff"},
+   {"text": "About the Devs", "rect": pygame.Rect(451, 550, 250, 60), "screen": "devs"},
 ]
 
 # Lightning parameters
@@ -51,7 +51,6 @@ current_segment_index = 0
 strike_interval = 200  # Interval between strikes
 lightning_timer = 0
 strike_from_left = True  # Alternates between left and right
-
 
 def generate_lightning():
     if strike_from_left:
@@ -96,6 +95,7 @@ def draw_buttons(mouse_pos):
         text_surface = button_font.render(button["text"], True, WHITE)
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
+
 
 
 def draw_grid():
@@ -219,10 +219,23 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for switch in switches:
             screen.blit(switch_off, (switch.x, switch.y))
         for wire in wires:
-            screen.blit(wire_long, (wire.x, wire.y))
-        pygame.draw.rect(screen, BUTTON_COLOR, back_button, border_radius=10)   
+            screen.blit(wire_long, (wire.x, wire.y))   
         pygame.display.flip()  # Update the screen
-        
+
+def dev():
+    main_frame = pygame.image.load('images/aboutdev/main frame.png')
+    main_frame = pygame.transform.scale(main_frame, (384,192))
+    sec_frame = pygame.image.load('images/aboutdev/sec frame.png')
+    sec_frame = pygame.transform.scale(sec_frame, (384, 96))
+    connect_frame = pygame.image.load('images/aboutdev/connection frame.png')
+    connect_frame = pygame.transform.scale(connect_frame, (16, 32))
+    for i in range(2):
+        for j in range(2):
+            screen.blit(main_frame, (16 + (420*i),16 + (380*j)))
+            screen.blit(connect_frame, (32 + (420*i), 208 + (380*j)))
+            screen.blit(connect_frame, (368 + (420*i), 208 + (380*j)))
+            screen.blit(sec_frame, (16 + (420*i),240 + (380*j)))
+
 
 
 def main():
@@ -231,7 +244,7 @@ def main():
 
     while True:
         mouse_pos = pygame.mouse.get_pos()
-        screen.fill(BLACK if current_screen == "title" else WHITE)
+        screen.fill(BLACK)
 
         if current_screen == "title":
             title_surface = title_font.render("Lights Out", True, WHITE)
@@ -259,6 +272,10 @@ def main():
             back_text = button_font.render('Back',True,WHITE)
             screen.blit(back_text, back_text.get_rect(center=back_button.center))
             grid_area(10,10,10)
+
+        elif current_screen == 'devs':
+            dev()
+
             
             
 
@@ -278,7 +295,6 @@ def main():
                         current_screen = "title"
 
         pygame.display.flip()  # Update the screen
-
 
 if __name__ == "__main__":
     main()

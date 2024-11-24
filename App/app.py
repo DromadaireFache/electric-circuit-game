@@ -117,6 +117,8 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     resistors = []
     bulbs = []
     switches = []
+    #Component rotations
+    component_rotations = []
     def_img_size = (32,32)
     bulb_img_size = (60,60)
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
@@ -130,45 +132,51 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         resistors.append(pygame.Rect(x, y, BOX_WIDTH, BOX_HEIGHT))
     components.append(resistors)
+    component_rotations.append([False]*len(resistors))
     for i in range(num_bulbs):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         bulbs.append(pygame.Rect(x+50, y  , BOX_WIDTH, BOX_HEIGHT))
     components.append(bulbs)
+    component_rotations.append([False]*len(bulbs))
     for i in range(num_switch):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         switches.append(pygame.Rect(x+100, y, BOX_WIDTH, BOX_HEIGHT))
     components.append(switches)
+    component_rotations.append([False]*len(switches))
     for i in range(200):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  # 20 pixels from the bottom
         wires.append(pygame.Rect(x+150, y, BOX_WIDTH, BOX_HEIGHT))
     components.append(wires)
-    
-    # Variables to track dragging state
+    component_rotations.append([False]*len(wires))
+
+    #Variables to track dragging state
     dragging = False
     dragged_box = None
     offset_x, offset_y = 0, 0
 
+    def rotate(sprite, i, k):
+        if component_rotations[i][k] == True:
+            sprite = pygame.transform.rotate(sprite, 90)
+        return sprite
+
     # Main loop for the sandbox
     clock = pygame.time.Clock()
+    click = False
     while True:
         for event in pygame.event.get():
-
+            
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for type in components:
-                    for box in type:
-                        if box.collidepoint(event.pos):
-                            dragging = True
-                            dragged_box = box
-                            # Calculate offset between mouse and box corner
-                            offset_x = box.x - event.pos[0]
-                            offset_y = box.y - event.pos[1]
+                pos = pygame.mouse.get_pos()
+                for i, type in enumerate(components):
+                    for k, box in enumerate(type):
+                        if box.collidepoint(pos):
+                            click = not click
                             break
             
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -183,18 +191,33 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     # Keep box within screen bounds
                     dragged_box.x = max(0, min(SCREEN_WIDTH - BOX_WIDTH, dragged_box.x))
                     dragged_box.y = max(0, min(SCREEN_HEIGHT - BOX_HEIGHT, dragged_box.y))
+
             
+            elif click:
+                pos = pygame.mouse.get_pos()
+                for i, type in enumerate(components):
+                    for k, box in enumerate(type):
+                        if box.collidepoint(pos):
+                            if event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_r:
+                                    component_rotations[i][k] = not component_rotations[i][k]
+                                    print('r_press', component_rotations[i][k])
+                            dragging = True
+                            dragged_box = box
+                            # Calculate offset between mouse and box corner
+                            offset_x = box.x - pos[0]
+                            offset_y = box.y - pos[1]
 
         # Draw background and resistors
         draw_grid()
-        for box in resistors:
-            screen.blit(Res100, (box.x, box.y))   
-        for bulb in bulbs:
-            screen.blit(bulb_off, (bulb.x, bulb.y))
-        for switch in switches:
-            screen.blit(switch_off, (switch.x, switch.y))
-        for wire in wires:
-            screen.blit(wire_long, (wire.x, wire.y))
+        for i, box in enumerate(resistors):
+            screen.blit(rotate(Res100, 0, i), (box.x, box.y))
+        for i, bulb in enumerate(bulbs):
+            screen.blit(rotate(bulb_off, 1, i), (bulb.x, bulb.y))
+        for i, switch in enumerate(switches):
+            screen.blit(rotate(switch_off, 2, i), (switch.x, switch.y))
+        for i, wire in enumerate(wires):
+            screen.blit(rotate(wire_long, 3, i), (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
         
 

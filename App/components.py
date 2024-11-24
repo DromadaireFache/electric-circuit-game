@@ -342,7 +342,7 @@ def x_matrix(nodes: list[Node], v_sources: list[VoltageSource]):
     return np.linalg.inv(A) @ z
 
 class Grid:
-    DISSIZE = 12
+    DISSIZE = 6
     def __init__(self, cols, rows) -> None:
         self.map: list[list[None|Component|Wire]] = [[None for j in range(cols)] for i in range(rows)]
         self.rows = rows

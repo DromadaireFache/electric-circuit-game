@@ -5,11 +5,11 @@ import sys
 WHITE = (255, 255, 255)
 SCREEN_WIDTH, SCREEN_HEIGHT = 1152, 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-button_image = pygame.image.load('App/images/ui/button_new.png')
+button_image = pygame.image.load('images/ui/button_new.png')
 SCREEN_WIDTH, SCREEN_HEIGHT = 1152, 800
-title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
-button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
-general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
+title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
+general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
 #   0
 # 1   2
 #   3

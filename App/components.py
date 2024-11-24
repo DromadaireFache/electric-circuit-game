@@ -113,6 +113,7 @@ class Wire(Component):
                     node.v_dir[component] = np.sign(component.V)
     
     def get_current(self, nodes: list[Node], grid, my_node_index: int, x, ignore=(0,0)):
+        if self.is_switch and not self.closed: return 0
         map = grid.map
         rows = len(map)
         cols = len(map[0])
@@ -468,4 +469,6 @@ if __name__ == '__main__':
     # print(i)
     # print(inv_G @ i)
 
+    print(x_matrix(nodes, grid.V_sources()))
+    nodes = grid.find_nodes()
     print(x_matrix(nodes, grid.V_sources()))

@@ -31,9 +31,9 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
-button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
-general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
+title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
+general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')
@@ -182,25 +182,26 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for type in components:
-                    for box in type:
-                        if box.collidepoint(event.pos):
-                            dragging = True
-                            dragged_box = box
-                            if dragged_box in resistors:
-                                dragged_object = Resistor(res=100)
-                            elif dragged_box in bulbs:
-                                dragged_object = Resistor(res = 100, is_light=True)
-                            elif dragged_box in wires:
-                                dragged_object = Wire() 
-                            elif dragged_box in switches:
-                                dragged_object = Wire(is_switch=True)
-                            offset_x = box.x - event.pos[0]
-                            offset_y = box.y - event.pos[1]
-                            mouse_x, mouse_y = pygame.mouse.get_pos()
-                            if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                grid.remove((round((mouse_x-256)/32),round((mouse_y-32)/32)))
-                            break
+                # for type in components:
+                #     for box in type:
+                #         if box.collidepoint(event.pos):
+                #             dragging = True
+                #             dragged_box = box
+                #             if dragged_box in resistors:
+                #                 dragged_object = Resistor(res=100)
+                #             elif dragged_box in bulbs:
+                #                 dragged_object = Resistor(res = 100, is_light=True)
+                #             elif dragged_box in wires:
+                #                 dragged_object = Wire() 
+                #             elif dragged_box in switches:
+                #                 dragged_object = Wire(is_switch=True)
+                #             offset_x = box.x - event.pos[0]
+                #             offset_y = box.y - event.pos[1]
+                #             mouse_x, mouse_y = pygame.mouse.get_pos()
+                #             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
+                #                 grid.remove((round((mouse_x-256)/32),round((mouse_y-32)/32)))
+                #             break
+                click = not click
             
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -229,15 +230,29 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 for i, type in enumerate(components):
                     for k, box in enumerate(type):
                         if box.collidepoint(pos):
+                            dragging = True
+                            dragged_box = box
+                            if dragged_box in resistors:
+                                dragged_object = Resistor(res=100)
+                            elif dragged_box in bulbs:
+                                dragged_object = Resistor(res = 100, is_light=True)
+                            elif dragged_box in wires:
+                                dragged_object = Wire() 
+                            elif dragged_box in switches:
+                                dragged_object = Wire(is_switch=True)
+                            offset_x = box.x - pos[0]
+                            offset_y = box.y - pos[1]
+                            mouse_x, mouse_y = pygame.mouse.get_pos()
+
                             if event.type == pygame.KEYDOWN:
+                                print('down')
                                 if event.key == pygame.K_r:
                                     component_rotations[i][k] = not component_rotations[i][k]
                                     print('r_press', component_rotations[i][k])
                             dragging = True
                             dragged_box = box
-                            # Calculate offset between mouse and box corner
-                            offset_x = box.x - pos[0]
-                            offset_y = box.y - pos[1]
+                            if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
+                                grid.remove((round((mouse_x-256)/32),round((mouse_y-32)/32)))
 
         draw_grid()
         for i, box in enumerate(resistors):

@@ -403,12 +403,12 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for i, vol in enumerate(voltmeter):
             screen.blit(voltmeter_im, (vol.x, vol.y))
             if vol.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 350) and vol.y != SCREEN_HEIGHT - BOX_HEIGHT - 20 and volt_check:
-                measure_area(True, False)
+                measure_area(True, False, Voltmeter().voltage)
                 volt_check = False
         for i, am in enumerate(ameter):
             screen.blit(ameter_im, (am.x, am.y))
             if am.x != (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 400) and am.y != (SCREEN_HEIGHT - BOX_HEIGHT - 20) and Amp_check:
-                measure_area(False, True)
+                measure_area(False, True, 0, Wire(is_ameter=True).current)
                 Amp_check = False
         for i, vol in enumerate(voltage_sources):
             screen.blit(voltage_source_im, (vol.x, vol.y))

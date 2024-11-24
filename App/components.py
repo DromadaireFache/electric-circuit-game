@@ -424,11 +424,15 @@ class Grid:
         return iter(self.map)
     
     def V_sources(self):
+        nodes = self.find_nodes()
         V_sources_list = []
         for row in self:
             for component in row:
                 if type(component) is VoltageSource:
-                    V_sources_list.append(component)
+                    for node in nodes:
+                        if component in node.components:
+                            V_sources_list.append(component)
+                            break
         return V_sources_list
     
     def update(self):
@@ -490,6 +494,7 @@ if __name__ == '__main__':
     grid.place(Wire((2,4)))
     grid.place(Wire((3,4)))
     grid.place(Wire((4,4)))
+    grid.place(VoltageSource((8,8),volt=5))
 
     nodes = grid.find_nodes()
     for node in nodes: print(node)

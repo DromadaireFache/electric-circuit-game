@@ -33,16 +33,16 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
-button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
-general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
-dev_font_main = pygame.font.Font('App/Grand9k Pixel.ttf', 32)
+title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
+general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
+dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')
 button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
-button_image = pygame.image.load('images/ui/button_new.png')
-button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
+level_button = pygame.image.load('images/ui/level_button.png')
+level_button_hover = pygame.image.load('images/ui/level_button_hover.png')
 button_data = [
    {"text": "Sandbox", "rect": pygame.Rect(451, 250, 250, 60), "screen": "sandbox"},
    {"text": "Level Select", "rect": pygame.Rect(451, 340, 250, 60), "screen": "levels"},
@@ -119,11 +119,10 @@ def draw_buttons(mouse_pos):
     
 def level_fct(mouse_pos, lvl, x):
     rect = pygame.Rect(x, 350, 250, 250)
-    screen.blit(button_hover_image, rect)
     if rect.collidepoint(mouse_pos):
-        screen.blit(button_hover_image, rect)
+        screen.blit(level_button_hover, (x,350))
     else:
-        screen.blit(button_image, rect)
+        screen.blit(level_button, (x,350))
     text_surface = button_font.render(lvl, True, WHITE)
     text_rect = text_surface.get_rect(center=rect.center)
     screen.blit(text_surface, text_rect)
@@ -208,9 +207,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     offset_x, offset_y = 0, 0
 
     def rotate(sprite, i, k):
-        if component_rotations[i][k] == True:
-            sprite = pygame.transform.rotate(sprite, 90)
-        return sprite
+        return pygame.transform.rotate(sprite, 90) if component_rotations[i][k] else sprite
 
     # Main loop for the sandbox
     clock = pygame.time.Clock()
@@ -278,7 +275,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             dragging = True
                             dragged_box = box
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                x, y = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
+                                x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
                                 print('remove:', (y,x))
                                 grid.remove((y,x))
 
@@ -407,13 +404,16 @@ def main():
             level_screen()
             # back_fct(mouse_pos)
         
-        elif current_screen == 'nerd_stuff':
+        #elif current_screen == 'nerd_stuff':
             #encyclopedia()
             # back_fct(mouse_pos)
             pass
+            #back_fct(mouse_pos)
+            #continue
 
         elif current_screen == 'devs':
             dev()
+            #back_fct(mouse_pos)
             # back_fct(mouse_pos)
 
         elif current_screen == 'quit':

@@ -163,8 +163,7 @@ class Wire(Component):
         if self.row > 0 and not (self.is_switch and not self.closed): #add the one above
             component: Component | Wire = map[self.row-1][self.col]
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                if not (component.has_dir and not component.vertical) \
-                    and not (component.is_switch and not component.closed):
+                if not (component.has_dir and not component.vertical):
                     index |= 1
             elif component != None and component.vertical: #if its another component just add it to node
                 index |= 1
@@ -172,8 +171,7 @@ class Wire(Component):
         if self.row < rows-1 and not (self.is_switch and not self.closed): #add the one below
             component: Component | Wire = map[self.row+1][self.col]
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                if not (component.has_dir and not component.vertical) \
-                    and not (component.is_switch and not component.closed):
+                if not (component.has_dir and not component.vertical):
                     index |= 2
             elif component != None and component.vertical: #if its another component just add it to node
                 index |= 2
@@ -181,8 +179,7 @@ class Wire(Component):
         if self.col < cols-1 and not (self.is_switch and not self.closed): #add the one right
             component: Component | Wire = map[self.row][self.col+1]
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                if not (component.has_dir and component.vertical) \
-                    and not (component.is_switch and not component.closed):
+                if not (component.has_dir and component.vertical):
                     index |= 4
             elif component != None and not component.vertical: #if its another component just add it to node
                 index |= 4
@@ -190,8 +187,7 @@ class Wire(Component):
         if self.col > 0 and not (self.is_switch and not self.closed): #add the one left
             component: Component | Wire = map[self.row][self.col-1]
             if type(self) is type(component):  #if its a wire continue to make node bigger
-                if not (component.has_dir and component.vertical) \
-                    and not (component.is_switch and not component.closed):
+                if not (component.has_dir and component.vertical):
                     index |= 8
             elif component != None and not component.vertical: #if its another component just add it to node
                 index |= 8

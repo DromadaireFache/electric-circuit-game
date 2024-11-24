@@ -49,8 +49,3 @@ def get_light_sprite(pos: tuple[int,int], grid: Grid):
             off.blit(light, (-128,-128))
         return off
     except: pass
-
-
-
-    
-    

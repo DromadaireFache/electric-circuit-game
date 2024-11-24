@@ -143,8 +143,8 @@ class Wire(Component):
             and not (self.is_switch and not self.closed) and not ignore == (0,0): #add the one right
             component: Component = map[self.row][self.col+1]
             try:
-                current += component.get_current(nodes, grid, my_node_index, x, ignore=(0,-1))
-                if type(component) is CurrentSource:
+                current -= component.get_current(nodes, grid, my_node_index, x, ignore=(0,-1))
+                if type(component) is Resistor:
                     print(component, current)
             except:
                 pass
@@ -153,7 +153,7 @@ class Wire(Component):
             and not (self.is_switch and not self.closed): #add the one left
             component: Component = map[self.row][self.col-1]
             try:
-                current -= component.get_current(nodes, grid, my_node_index, x, ignore=(0,1))
+                current += component.get_current(nodes, grid, my_node_index, x, ignore=(0,1))
             except:
                 pass
         
@@ -242,16 +242,17 @@ class Resistor(Component):
         self.W = self.get_voltage(nodes, x)**2/self.R
     
     def get_current(self, nodes: list[Node], grid, my_node_index: int, x, ignore=(0,0)):
-        if my_node_index == 0:
-            my_voltage = 0
-        else:
-            my_voltage = x[my_node_index-1]
+        # if my_node_index == 0:
+        #     my_voltage = 0
+        # else:
+        #     my_voltage = x[my_node_index-1]
         
-        for i, node in enumerate(nodes):
-            if node != nodes[my_node_index] and self in node:
-                if i == 0:
-                    return - x[my_node_index] / self.R
-                return (x[i-1] - my_voltage) / self.R
+        # for i, node in enumerate(nodes):
+        #     if node != nodes[my_node_index] and self in node:
+        #         if i == 0:
+        #             return - x[my_node_index] / self.R
+        #         return (x[i-1] - my_voltage) / self.R
+        return -self.get_voltage(nodes,x)/self.R
     
     def get_voltage(self, nodes: list[Node], x):
         first_node = -1

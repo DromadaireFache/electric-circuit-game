@@ -186,17 +186,16 @@ def draw_description(info_list):
     screen.blit(voltmeter_display, (928,440))
     screen.blit(ameter_display, (1056,440))
 
-def measure_area(Volt, Amp, voltage = 0, ampage = 0):
+def measure_area(Volt=False, Amp=False, voltage = 0, ampage = 0):
     Area = pygame.Rect(300, 300, 256, 64)
     if Volt:
         voltage = str(round(voltage,2)) + 'V'
         img = general_font.render(voltage, True, BLACK)
         screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT -40))
     if Amp:
-        Amps = str(round(ampage),2) + 'A'
+        Amps = f'{ampage*1000:.2f}mA' if abs(ampage) < 0.1 else f'{ampage:.2f}A'
         img = general_font.render(Amps, True, BLACK)
         screen.blit(img, (5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING + 500, SCREEN_HEIGHT - BOX_HEIGHT - 20 ))
-
 
 def draw_grid():
     nbr_row = 36
@@ -410,7 +409,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for i, vol in enumerate(voltmeter):
             screen.blit(voltmeter_im, (vol.x, vol.y))
             x, y = pixel2grid(vol.x, vol.y)
-            if 20 > x >= 0 and 20 > y >= 0 and volt_check:
+            if 20 > x >= 0 and 20 > y >= 0: # and volt_check:
                 try:
                     measure_area(True, False, voltage=grid.map[y][x].voltage)
                     volt_check = False
@@ -418,7 +417,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for i, am in enumerate(ameter):
             screen.blit(ameter_im, (am.x, am.y))
             x, y = pixel2grid(am.x, am.y)
-            if 20 > x >= 0 and 20 > y >= 0 and amp_check:
+            if 20 > x >= 0 and 20 > y >= 0: # and amp_check:
                 try:
                     measure_area(False, True, ampage=grid.map[y][x].current)
                     amp_check = False

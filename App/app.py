@@ -1,4 +1,5 @@
 import pygame
+pygame.init()
 import sys
 import random
 from functions import *
@@ -6,6 +7,8 @@ from components import *
 
 # Initialize Pygame
 pygame.init()
+pygame.font.init()
+
 grid = Grid(20, 20)
 
 # Screen setup
@@ -113,6 +116,20 @@ def back_fct(mouse_pos):
             if rect.collidepoint(mouse_pos):
                 main()
     
+def level_fct(mouse_pos, lvl, x):
+    rect = pygame.Rect(x, 350, 250, 250)
+    screen.blit(button_hover_image, rect)
+    if rect.collidepoint(mouse_pos):
+        screen.blit(button_hover_image, rect)
+    else:
+        screen.blit(button_image, rect)
+    text_surface = button_font.render(lvl, True, WHITE)
+    text_rect = text_surface.get_rect(center=rect.center)
+    screen.blit(text_surface, text_rect)
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if rect.collidepoint(mouse_pos):
+                main()
 
 
 def draw_grid():
@@ -283,7 +300,36 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for wire in wires:
             screen.blit(wire_long, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
+def level_screen():
+    level_button_data = [
+        {'Text' : '1', 'rect': pygame.Rect(128,128,250,28), 'screen' : 'lvl 1' },
+        {'Text' : '2', 'rect': pygame.Rect(128,128,250,58), 'screen' : 'lvl 2'},
+    ]
 
+    while True:
+        current_screen = 'levels'
+        mouse_pos = pygame.mouse.get_pos()
+        level_fct(mouse_pos, '1', 60)
+        level_fct(mouse_pos, '2', 500 )
+        back_fct(mouse_pos)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if current_screen == "levels":
+                    for button in level_button_data:
+                        if button["rect"].collidepoint(mouse_pos):
+                            current_screen = button["screen"]
+                elif current_screen == "lvl 1":
+                    back_button = pygame.Rect(20, 20, 100, 50)
+                    if back_button.collidepoint(mouse_pos):
+                        current_screen = "levels"
+                elif current_screen == 'lvl 2':
+                    back_button = pygame.Rect(20, 20, 100, 50)
+                    if back_button.collidepoint(mouse_pos):
+                        current_screen = 'levels'
+        pygame.display.flip()
 def dev():
     main_frame = pygame.image.load('images/aboutdev/main frame.png')
     main_frame = pygame.transform.scale(main_frame, (384,192))
@@ -352,6 +398,8 @@ def main():
             back_fct(mouse_pos)
         
         elif current_screen == 'levels':
+            screen.fill(RED)
+            level_screen()
             back_fct(mouse_pos)
         
         elif current_screen == 'nerd_stuff':

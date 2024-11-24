@@ -187,6 +187,7 @@ def draw_grid():
 
 
 def grid_area(num_resistors, num_bulbs, num_switch):
+    global components #test
     wires = []
     components = []
     resistors = []
@@ -387,7 +388,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 wire_sprite = pygame.transform.scale(wire_sprite, def_img_size)
             screen.blit(wire_sprite, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
-
+        
 def level_screen():
     level_button_data = [
         {'Text' : '1', 'rect': pygame.Rect(128,128,250,28), 'screen' : 'lvl 1' },

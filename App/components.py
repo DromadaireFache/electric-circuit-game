@@ -34,14 +34,21 @@ class Component:
 
 class Wire(Component):
     UNITS = 'A'
-    def __init__(self, pos=(0, 0), vertical=False, is_ameter=False) -> None:
+    def __init__(self, pos=(0, 0), vertical=False, is_ameter=False, is_switch=False) -> None:
         super().__init__(pos, vertical)
         self.is_ameter = is_ameter
+        self.is_switch = is_switch
+        self.has_dir = is_ameter or is_switch
         if is_ameter:
             self.current = 0
+        self.closed = False
 
     def __str__(self):
-        return f"AM {self.current:.2f}{self.UNITS}" if self.is_ameter else "Wire"
+        return f"AM {self.current:.2f}{self.UNITS}" if self.is_ameter else \
+            (f"Sw. {'|' if self.closed else ':'}" if self.is_switch else "Wire")
+    
+    def switch(self):
+        self.closed = not self.closed
     
     def makenode(self, node: Node, map: list[list[None|Component]], ignore=(0,0)):
         self.in_node = 1
@@ -49,10 +56,10 @@ class Wire(Component):
         rows = len(map)
         cols = len(map[0])
 
-        if self.row > 0 and ignore[0] != -1 and not (self.is_ameter and not self.vertical): #add the one above
+        if self.row > 0 and ignore[0] != -1 and not (self.has_dir and not self.vertical): #add the one above
             component: Component = map[self.row-1][self.col]
             # print(component)
-            if type(self) is type(component):  #if its a wire continue to make node bigger
+            if type(self) is type(component) and not (self.is_switch and not self.closed):  #if its a wire continue to make node bigger
                 component.makenode(node, map, ignore=(1,0))
 
             elif component != None and component.vertical: #if its another component just add it to node
@@ -63,10 +70,10 @@ class Wire(Component):
                 elif type(component) is VoltageSource:
                     node.v_dir[component] = np.sign(component.V)
         
-        if self.row < rows and ignore[0] != 1 and not (self.is_ameter and not self.vertical): #add the one below
+        if self.row < rows-1 and ignore[0] != 1 and not (self.has_dir and not self.vertical): #add the one below
             component: Component = map[self.row+1][self.col]
             # print(component)
-            if type(self) is type(component):
+            if type(self) is type(component) and not (self.is_switch and not self.closed):
                 component.makenode(node, map, ignore=(-1,0))
 
             elif component != None and component.vertical:
@@ -77,10 +84,10 @@ class Wire(Component):
                 elif type(component) is VoltageSource:
                     node.v_dir[component] = -np.sign(component.V)
         
-        if self.col > 0 and ignore[1] != -1 and not (self.is_ameter and self.vertical): #add the one right
+        if self.col > 0 and ignore[1] != -1 and not (self.has_dir and self.vertical): #add the one right
             component: Component = map[self.row][self.col+1]
             # print(component)
-            if type(self) is type(component):
+            if type(self) is type(component) and not (self.is_switch and not self.closed):
                 component.makenode(node, map, ignore=(0,1)) 
 
             elif component != None and not component.vertical:
@@ -91,10 +98,10 @@ class Wire(Component):
                 elif type(component) is VoltageSource:
                     node.v_dir[component] = -np.sign(component.V)
         
-        if self.col < cols and ignore[1] != 1 and not (self.is_ameter and self.vertical): #add the one left
+        if self.col < cols-1 and ignore[1] != 1 and not (self.has_dir and self.vertical): #add the one left
             component: Component = map[self.row][self.col-1]
             # print(component)
-            if type(self) is type(component):
+            if type(self) is type(component) and not (self.is_switch and not self.closed):
                 component.makenode(node, map, ignore=(0,-1))
 
             elif component != None and not component.vertical:
@@ -111,29 +118,33 @@ class Wire(Component):
         cols = len(map[0])
         current = 0
 
-        if self.row > 0 and ignore[0] != -1 and not (self.is_ameter and not self.vertical) and not ignore == (0,0): #add the one above
+        if self.row > 0 and ignore[0] != -1 and not (self.has_dir and not self.vertical) \
+            and not (self.is_switch and not self.closed) and not ignore == (0,0): #add the one above
             component: Component = map[self.row-1][self.col]
             try:
                 current += component.get_current(nodes, grid, my_node_index, x, ignore=(1,0))
             except:
                 pass
         
-        if self.row < rows and ignore[0] != 1 and not (self.is_ameter and not self.vertical): #add the one below
+        if self.row < rows-1 and ignore[0] != 1 and not (self.has_dir and not self.vertical) \
+            and not (self.is_switch and not self.closed): #add the one below
             component: Component = map[self.row+1][self.col]
             try:
                 current += component.get_current(nodes, grid, my_node_index, x, ignore=(-1,0))
             except:
                 pass
         
-        if self.col > 0 and ignore[1] != -1 and not (self.is_ameter and self.vertical) and not ignore == (0,0): #add the one right
-            component: Component = map[self.row][self.col-1]
+        if self.col > 0 and ignore[1] != -1 and not (self.has_dir and self.vertical) \
+            and not (self.is_switch and not self.closed) and not ignore == (0,0): #add the one right
+            component: Component = map[self.row][self.col+1]
             try:
                 current += component.get_current(nodes, grid, my_node_index, x, ignore=(0,1))
             except:
                 pass
         
-        if self.col < cols and ignore[1] != 1 and not (self.is_ameter and self.vertical): #add the one left
-            component: Component = map[self.row][self.col+1]
+        if self.col < cols-1 and ignore[1] != 1 and not (self.has_dir and self.vertical) \
+            and not (self.is_switch and not self.closed): #add the one left
+            component: Component = map[self.row][self.col-1]
             try:
                 current += component.get_current(nodes, grid, my_node_index, x, ignore=(0,-1))
             except:
@@ -141,6 +152,50 @@ class Wire(Component):
         
         self.current = current
         return current
+    
+    def get_index(self, grid):
+        map = grid.map
+        rows = len(map)
+        cols = len(map[0])
+        index = 0
+
+        if self.row > 0 and not (self.is_switch and not self.closed): #add the one above
+            component: Component | Wire = map[self.row-1][self.col]
+            if type(self) is type(component):  #if its a wire continue to make node bigger
+                if not (component.has_dir and not component.vertical) \
+                    and not (component.is_switch and not component.closed):
+                    index |= 1
+            elif component != None and component.vertical: #if its another component just add it to node
+                index |= 1
+        
+        if self.row < rows-1 and not (self.is_switch and not self.closed): #add the one below
+            component: Component | Wire = map[self.row+1][self.col]
+            if type(self) is type(component):  #if its a wire continue to make node bigger
+                if not (component.has_dir and not component.vertical) \
+                    and not (component.is_switch and not component.closed):
+                    index |= 2
+            elif component != None and component.vertical: #if its another component just add it to node
+                index |= 2
+        
+        if self.col < cols-1 and not (self.is_switch and not self.closed): #add the one right
+            component: Component | Wire = map[self.row][self.col+1]
+            if type(self) is type(component):  #if its a wire continue to make node bigger
+                if not (component.has_dir and component.vertical) \
+                    and not (component.is_switch and not component.closed):
+                    index |= 4
+            elif component != None and not component.vertical: #if its another component just add it to node
+                index |= 4
+        
+        if self.col > 0 and not (self.is_switch and not self.closed): #add the one left
+            component: Component | Wire = map[self.row][self.col-1]
+            if type(self) is type(component):  #if its a wire continue to make node bigger
+                if not (component.has_dir and component.vertical) \
+                    and not (component.is_switch and not component.closed):
+                    index |= 8
+            elif component != None and not component.vertical: #if its another component just add it to node
+                index |= 8
+        
+        return index
 
 class VoltageSource(Component):
     '''aka Battery'''
@@ -193,13 +248,33 @@ class Resistor(Component):
                     return - x[my_node_index] / self.R
                 return (x[i-1] - my_voltage) / self.R
 
-class Switch(Component):
-    def __init__(self, pos=(0, 0), vertical=False) -> None:
+class Voltmeter(Component):
+    UNITS = 'V'
+    def __init__(self, pos=(0, 0), vertical=False, direction=1) -> None:
         super().__init__(pos, vertical)
-        self.closed = False
-    
-    def switch(self):
-        self.closed = not self.closed
+        self.dir = direction
+        self.voltage = 0
+
+    def __str__(self):
+        return f"VM {self.voltage:.2f}{self.UNITS}"
+
+    def get_voltage(self, nodes: list[Node], x):
+        first_node = -1
+        second_node = -1
+        for i, node in enumerate(nodes):
+            if self in node:
+                if first_node == -1:
+                    first_node = i
+                else:
+                    second_node = i
+                    break
+        if second_node == -1:
+            self.voltage = 0
+            return
+        
+        volt1 = 0 if first_node == 0 else x[first_node-1]
+        volt2 = 0 if second_node == 0 else x[second_node-1]
+        self.voltage = (volt2 - volt1) * self.dir
 
 def G_matrix(nodes: list[Node]):
     #first wire made is ground, therefore does not go into matrix
@@ -311,9 +386,14 @@ class Grid:
         
         #TO REMOVE COMPONENTS NOT CONNECTED TWICE
         for i, node in enumerate(nodes):
+            not_all_wires = False
             for j, component in enumerate(node):
                 if component.in_node != 2 and not type(component) is Wire:
                     nodes[i].components.pop(j)
+                if not type(component) is Wire:
+                    not_all_wires = True
+            if not not_all_wires or len(nodes[i].components) == 0:
+                nodes.pop(i)
 
         return nodes
     
@@ -328,12 +408,15 @@ class Grid:
                     V_sources_list.append(component)
         return V_sources_list
     
-    def get_currents(self, nodes:list[Node]):
+    def update(self):
+        nodes = grid.find_nodes()
         x = x_matrix(nodes, self.V_sources())
         for i, node in enumerate(nodes):
             for component in node.components:
                 if type(component) is Wire and component.is_ameter:
                     component.get_current(nodes, self, i, x)
+                elif type(component) is Voltmeter:
+                    component.get_voltage(nodes, x)
     
 if __name__ == '__main__':
     grid = Grid(11, 11)
@@ -347,11 +430,13 @@ if __name__ == '__main__':
 
     grid.place(CurrentSource((3,1), True, current=1))
     grid.place(VoltageSource((6,7), volt=-1))
+    grid.place(Voltmeter((3,7), direction=-1))
 
+    grid.place(Wire((0,0)))
     grid.place(Wire((2,1)))
     grid.place(Wire((4,1)))
     grid.place(Wire((4,4)))
-    grid.place(Wire((4,5)))
+    grid.place(Wire((4,5), is_switch=True))
     grid.place(Wire((4,6)))
     grid.place(Wire((6,4)))
     grid.place(Wire((6,5), False, is_ameter=True))
@@ -364,10 +449,17 @@ if __name__ == '__main__':
     grid.place(Wire((4,8)))
     grid.place(Wire((5,8)))
     grid.place(Wire((6,8)))
+    grid.place(Wire((3,8)))
+    grid.place(Wire((3,6)))
     nodes = grid.find_nodes()
-    grid.get_currents(nodes)
-    print(grid)
     for node in nodes: print(node)
+    grid.update()
+    print('index:', grid.map[4][4].get_index(grid))
+    print(grid)
+    grid.map[4][5].switch()
+    grid.update()
+    print('index:', grid.map[4][4].get_index(grid))
+    print(grid)
 
     # G = G_matrix(nodes)
     # print(G)

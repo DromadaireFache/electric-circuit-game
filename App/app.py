@@ -33,10 +33,11 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
-button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
-general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
-dev_font_main = pygame.font.Font('App/Grand9k Pixel.ttf', 32)
+title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
+general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
+dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
+sandbox_font = pygame.font.Font('Grand9k Pixel.ttf', 16)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')
@@ -131,6 +132,22 @@ def level_fct(mouse_pos, lvl, x):
             if rect.collidepoint(mouse_pos):
                 main()
 
+def draw_description():
+    title = 'SANDBOX'
+    description1 = 'This is where you can try'
+    description2 =  'out your circuits! Have fun!'
+    rect_title = pygame.Rect(0,0,256,64)
+    title_surface = button_font.render(title,True,WHITE)
+    title_rect = title_surface.get_rect(center=rect_title.center)
+    screen.blit(title_surface, title_rect)
+    def draw_description_fct(text,side,height):
+       rect_desc = pygame.Rect(0,height,256,32)
+       desc_surface = desc_surface = sandbox_font.render(text,True,WHITE)
+       desc_rect = desc_surface.get_rect(center=rect_desc.center)
+       screen.blit(desc_surface, desc_rect)
+    draw_description_fct(description1,0,64)
+    draw_description_fct(description2,0,88)
+
 
 def draw_grid():
     nbr_row = 36
@@ -148,6 +165,8 @@ def draw_grid():
     screen.blit(top_ui, (256,0)) # Top
     screen.blit(bottom_ui, (256,672)) # Bottom
     screen.blit(grid, (256, 32))
+    draw_description()
+
 
 def grid_area(num_resistors, num_bulbs, num_switch):
     wires = []

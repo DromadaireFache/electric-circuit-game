@@ -142,18 +142,29 @@ def level_fct(mouse_pos, lvl, x):
 def draw_description():
     title = 'SANDBOX'
     description1 = 'This is where you can try'
-    description2 =  'out your circuits! Have fun!'
+    description2 = 'out your circuits! Have fun!'
+    description3 = 'Wires'
+    description4 = 'Battery'
+    description5 = 'Lightbulb'
+    description6 = 'Switch'
+    description7 = 'Resistor'
+    description8 = 'Current Source'
+    description9 = 'Voltmeter'
+    description10 = 'Ameter'
     rect_title = pygame.Rect(0,0,256,64)
     title_surface = button_font.render(title,True,WHITE)
     title_rect = title_surface.get_rect(center=rect_title.center)
     screen.blit(title_surface, title_rect)
-    def draw_description_fct(text,side,height):
-       rect_desc = pygame.Rect(0,height,256,32)
+    def draw_desc_fct(text,side,height):
+       rect_desc = pygame.Rect(side,height,256,32)
        desc_surface = desc_surface = sandbox_font.render(text,True,WHITE)
        desc_rect = desc_surface.get_rect(center=rect_desc.center)
        screen.blit(desc_surface, desc_rect)
-    draw_description_fct(description1,0,64)
-    draw_description_fct(description2,0,88)
+    draw_desc_fct(description1,0,64)
+    draw_desc_fct(description2,0,88)
+    draw_desc_fct(description3,832,24)
+    draw_desc_fct(description4,960,24)
+    
 
 
 def draw_grid():

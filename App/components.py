@@ -437,7 +437,6 @@ class Grid:
             x = x_matrix(nodes, self.V_sources())
         except:
             x = None
-        print(x)
         for i, node in enumerate(nodes):
             for component in node.components:
                 if type(component) is Wire and component.is_ameter:

@@ -334,9 +334,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             offset_y = box.y - pos[1]
                             mouse_x, mouse_y = pygame.mouse.get_pos()
                             if dragged_box in resistors:
-                                dragged_object = Resistor(res = 100, vertical = not component_rotations[i][k])
+                                dragged_object = Resistor(res = 100, vertical = component_rotations[i][k])
                             elif dragged_box in bulbs:
-                                dragged_object = Resistor(res = 100, is_light=True, vertical = not component_rotations[i][k])
+                                dragged_object = Resistor(res = 100, is_light=True, vertical = component_rotations[i][k])
                             elif dragged_box in wires:
                                 dragged_object = Wire()
                             elif dragged_box in switches:

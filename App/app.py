@@ -352,7 +352,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                     main()
 
             
-            elif click:                
+            elif click:
                 pos = pygame.mouse.get_pos()
                 for i, type in enumerate(components):
                     for k, box in enumerate(type):
@@ -377,19 +377,19 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             elif dragged_box in voltage_sources:
                                 dragged_object = VoltageSource(volt=5)
                             elif dragged_box in current_sources:
-                                dragged_object = CurrentSource(current=0.1)
+                                dragged_object = CurrentSource(current=1)
 
-                            if event.type == pygame.KEYDOWN:
+                            if event.type == pygame.TEXTINPUT:
                                 print('down')
-                                if event.key == pygame.K_r:
+                                if event.text == 'r':
                                     component_rotations[i][k] = not component_rotations[i][k]
                                     print('r_press', component_rotations[i][k], i,k)
-                            
-                if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                    x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
-                    print('remove:', (y,x))
-                    grid.update()
-                    grid.remove((y,x))
+
+                            if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
+                                x, y = pixel2grid(pos[0] + offset_x, pos[1] + offset_y)
+                                print('remove:', (y,x))
+                                grid.remove((y,x))
+                        
 
         draw_grid()
         volt_check = True
@@ -508,6 +508,8 @@ def main():
             title_surface = title_font.render("Lights Out!", True, WHITE)
             title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 100))
             screen.blit(title_surface, title_rect)
+            warning_sign = pygame.image.load('images/ui/warning sign.png')
+            screen.blit(warning_sign, (850,544))
 
             draw_buttons(mouse_pos)
             if lightning_timer <= 0:

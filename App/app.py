@@ -52,7 +52,6 @@ strike_interval = 200  # Interval between strikes
 lightning_timer = 0
 strike_from_left = True  # Alternates between left and right
 
-
 def generate_lightning():
     if strike_from_left:
         start_x = 0   
@@ -96,6 +95,7 @@ def draw_buttons(mouse_pos):
         text_surface = button_font.render(button["text"], True, WHITE)
         text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
+
 
 
 def draw_grid():

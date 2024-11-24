@@ -408,11 +408,14 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             pos = pygame.mouse.get_pos()
                             for k, box in enumerate(type):
                                 if box.collidepoint(pos):
-                                    print(k)
-                                    switch_states[k] = not switch_states[k]
-                                    print(switch_states[k])
-                                    dragged_object = Wire(is_switch=True)
-                                    dragged_object.closed = switch_states[k]
+                                    if 256 <= box.x <= 896 and 32 <= box.y <= 672:
+                                        print(k)
+                                        switch_states[k] = not switch_states[k]
+                                        print(switch_states[k])
+                                        x, y = pixel2grid(box.x, box.y)
+                                        grid.map[y][x].switch()
+                                        grid.update()
+                                        print(grid)
 
 
         draw_grid()

@@ -1,5 +1,6 @@
 import pygame
 pygame.init()
+pygame.font.init()
 import sys
 import random
 from functions import *
@@ -40,6 +41,8 @@ general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
 dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
 
 # Button data for the title screen
+button_image = pygame.image.load('images/ui/button_new.png')
+button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_image = pygame.image.load('images/ui/button_new.png')
 button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_data = [
@@ -161,6 +164,12 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     bulb_img_size = (60,60)
     Res100 = pygame.image.load('images/resistors/resistor 100.png')
     Res100 = pygame.transform.scale(Res100, def_img_size)
+    bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
+    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
+    switch_on = pygame.transform.scale(pygame.image.load('images/switch/switch on.png'), bulb_img_size)
+    switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
+    wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
+    Volt = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
     bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
     switch_on = pygame.transform.scale(pygame.image.load('images/switch/switch on.png'), bulb_img_size)
@@ -291,6 +300,7 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                 wire_sprite = pygame.transform.scale(wire_sprite, def_img_size)
             screen.blit(wire_sprite, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
+
 def level_screen():
     level_button_data = [
         {'Text' : '1', 'rect': pygame.Rect(128,128,250,28), 'screen' : 'lvl 1' },
@@ -365,7 +375,7 @@ def main():
         screen.fill(BLACK)
 
         if current_screen == "title":
-            title_surface = title_font.render("Lights Out", True, WHITE)
+            title_surface = title_font.render("Lights Out!", True, WHITE)
             title_rect = title_surface.get_rect(center=(SCREEN_WIDTH // 2, 100))
             screen.blit(title_surface, title_rect)
 
@@ -398,6 +408,7 @@ def main():
             back_fct(mouse_pos)
         
         elif current_screen == 'nerd_stuff':
+            #encyclopedia()
             back_fct(mouse_pos)
 
         elif current_screen == 'devs':

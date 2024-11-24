@@ -1,6 +1,4 @@
 import pygame
-pygame.init()
-pygame.font.init()
 import sys
 import random
 from functions import *
@@ -35,10 +33,10 @@ dragged_box = None
 offset_x, offset_y = 0, 0
 
 # Fonts
-title_font = pygame.font.Font('Grand9k Pixel.ttf', 48)
-button_font = pygame.font.Font('Grand9k Pixel.ttf', 28)
-general_font = pygame.font.Font('Grand9k Pixel.ttf', 18)
-dev_font_main = pygame.font.Font('Grand9k Pixel.ttf', 32)
+title_font = pygame.font.Font('App/Grand9k Pixel.ttf', 48)
+button_font = pygame.font.Font('App/Grand9k Pixel.ttf', 28)
+general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
+dev_font_main = pygame.font.Font('App/Grand9k Pixel.ttf', 32)
 
 # Button data for the title screen
 button_image = pygame.image.load('images/ui/button_new.png')
@@ -279,7 +277,9 @@ def grid_area(num_resistors, num_bulbs, num_switch):
                             dragging = True
                             dragged_box = box
                             if 256 <= mouse_x <= 896 and 32 <= mouse_y <= 672 and dragged_box != None:
-                                grid.remove(pixel2grid(mouse_x,mouse_y))
+                                x, y = pixel2grid(event.pos[0] + offset_x, event.pos[1] + offset_y)
+                                print('remove:', (y,x))
+                                grid.remove((y,x))
 
         draw_grid()
         for i, box in enumerate(resistors):
@@ -404,16 +404,19 @@ def main():
         elif current_screen == 'levels':
             screen.fill(RED)
             level_screen()
-            back_fct(mouse_pos)
+            # back_fct(mouse_pos)
         
         #elif current_screen == 'nerd_stuff':
             #encyclopedia()
+            # back_fct(mouse_pos)
+            pass
             #back_fct(mouse_pos)
             #continue
 
         elif current_screen == 'devs':
             dev()
             #back_fct(mouse_pos)
+            # back_fct(mouse_pos)
 
         elif current_screen == 'quit':
             pygame.quit()

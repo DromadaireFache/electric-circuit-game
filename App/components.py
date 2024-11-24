@@ -123,7 +123,7 @@ class Wire(Component):
             and not (self.is_switch and not self.closed) and not ignore == (0,0): #add the one above
             component: Component = map[self.row-1][self.col]
             try:
-                current += component.get_current(nodes, grid, my_node_index, x, ignore=(1,0))
+                current -= component.get_current(nodes, grid, my_node_index, x, ignore=(1,0))
             except:
                 pass
         
@@ -135,7 +135,7 @@ class Wire(Component):
             except:
                 pass
         
-        if self.col > 0 and ignore[1] != -1 and not (self.has_dir and self.vertical) \
+        if self.col < cols-1 and ignore[1] != -1 and not (self.has_dir and self.vertical) \
             and not (self.is_switch and not self.closed) and not ignore == (0,0): #add the one right
             component: Component = map[self.row][self.col+1]
             try:
@@ -143,11 +143,11 @@ class Wire(Component):
             except:
                 pass
         
-        if self.col < cols-1 and ignore[1] != 1 and not (self.has_dir and self.vertical) \
+        if self.col > 0 and ignore[1] != 1 and not (self.has_dir and self.vertical) \
             and not (self.is_switch and not self.closed): #add the one left
             component: Component = map[self.row][self.col-1]
             try:
-                current += component.get_current(nodes, grid, my_node_index, x, ignore=(0,-1))
+                current -= component.get_current(nodes, grid, my_node_index, x, ignore=(0,-1))
             except:
                 pass
         
@@ -290,7 +290,7 @@ class Voltmeter(Component):
         
         volt1 = 0 if first_node == 0 else x[first_node-1]
         volt2 = 0 if second_node == 0 else x[second_node-1]
-        self.voltage = (volt2 - volt1) * self.dir
+        self.voltage = -(volt2 - volt1) * self.dir
 
 def G_matrix(nodes: list[Node]):
     #first wire made is ground, therefore does not go into matrix
@@ -352,6 +352,7 @@ def z_matrix(nodes: list[Node], v_sources: list[VoltageSource]):
     return np.concatenate((i,e), axis=0)
 
 def x_matrix(nodes: list[Node], v_sources: list[VoltageSource]):
+    if len(nodes) == 0: return
     A = A_matrix(nodes, v_sources)
     z = z_matrix(nodes, v_sources)
     return np.linalg.inv(A) @ z
@@ -426,58 +427,69 @@ class Grid:
     
     def update(self):
         nodes = self.find_nodes()
-        x = x_matrix(nodes, self.V_sources())
+        try:
+            x = x_matrix(nodes, self.V_sources())
+        except:
+            x = None
         for i, node in enumerate(nodes):
             for component in node.components:
                 if type(component) is Wire and component.is_ameter:
-                    component.get_current(nodes, self, i, x)
+                    if x == None: component.current = 0
+                    else: component.get_current(nodes, self, i, x)
                 elif type(component) is Voltmeter:
-                    component.get_voltage(nodes, x)
+                    if x == None: component.voltage = 0
+                    else: component.get_voltage(nodes, x)
                 elif type(component) is Resistor and component.is_light:
-                    component.power(nodes, x)
+                    if x == None: component.W = 0
+                    else: component.power(nodes, x)
     
 if __name__ == '__main__':
     grid = Grid(11, 11)
     Grid.DISSIZE = 12
     
-    grid.place(Resistor((3,2), True, res=1))
-    grid.place(Resistor((3,4), True, res=2))
-    grid.place(Resistor((5,4), True, res=3))
-    grid.place(Resistor((5,6), True, res=4, is_light=True))
-    grid.place(Resistor((4,7), res=5))
-    grid.place(Resistor((1,1), True, res=100))
+    # grid.place(Resistor((3,2), True, res=1))
+    # grid.place(Resistor((3,4), True, res=2))
+    # grid.place(Resistor((5,4), True, res=3))
+    # grid.place(Resistor((5,6), True, res=4, is_light=True))
+    # grid.place(Resistor((4,7), res=5))
+    # grid.place(Resistor((1,1), True, res=100))
 
-    grid.place(CurrentSource((3,1), True, current=1))
+    # grid.place(CurrentSource((3,1), True, current=1))
     grid.place(VoltageSource((6,7), volt=-1))
-    grid.place(Voltmeter((3,7), direction=-1))
-
-    grid.place(Wire((0,0)))
-    grid.place(Wire((2,1)))
-    grid.place(Wire((4,1)))
-    grid.place(Wire((4,4)))
-    grid.place(Wire((4,5), is_switch=True))
-    grid.place(Wire((4,6)))
-    grid.place(Wire((6,4)))
-    grid.place(Wire((6,5), False, is_ameter=True))
+    grid.place(Wire((5,7), is_ameter=True))
+    grid.place(Wire((5,6)))
     grid.place(Wire((6,6)))
-    grid.place(Wire((2,2)))
-    grid.place(Wire((2,3), False, is_ameter=True))
-    grid.place(Wire((2,4)))
-    grid.place(Wire((4,2)))
-    grid.place(Wire((4,3)))
-    grid.place(Wire((4,8)))
     grid.place(Wire((5,8)))
     grid.place(Wire((6,8)))
-    grid.place(Wire((3,8)))
-    grid.place(Wire((3,6)))
+    # grid.place(Voltmeter((3,7), direction=-1))
+
+    # grid.place(Wire((0,0)))
+    # grid.place(Wire((2,1)))
+    # grid.place(Wire((4,1)))
+    # grid.place(Wire((4,4)))
+    # grid.place(Wire((4,5), is_switch=True))
+    # grid.place(Wire((4,6)))
+    # grid.place(Wire((6,4)))
+    # grid.place(Wire((6,5), False, is_ameter=True))
+    # grid.place(Wire((6,6)))
+    # grid.place(Wire((2,2)))
+    # grid.place(Wire((2,3), False, is_ameter=True))
+    # grid.place(Wire((2,4)))
+    # grid.place(Wire((4,2)))
+    # grid.place(Wire((4,3)))
+    # grid.place(Wire((4,8)))
+    # grid.place(Wire((5,8)))
+    # grid.place(Wire((6,8)))
+    # grid.place(Wire((3,8)))
+    # grid.place(Wire((3,6)))
     nodes = grid.find_nodes()
     for node in nodes: print(node)
     grid.update()
-    print('index:', grid.map[4][4].get_index(grid))
+    # print('index:', grid.map[4][4].get_index(grid))
     print(grid)
-    grid.map[4][5].switch()
+    # grid.map[4][5].switch()
     grid.update()
-    print('index:', grid.map[4][4].get_index(grid))
+    # print('index:', grid.map[4][4].get_index(grid))
     print(grid)
 
     # G = G_matrix(nodes)

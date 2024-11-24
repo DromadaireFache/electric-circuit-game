@@ -40,8 +40,8 @@ general_font = pygame.font.Font('App/Grand9k Pixel.ttf', 18)
 dev_font_main = pygame.font.Font('App/Grand9k Pixel.ttf', 32)
 
 # Button data for the title screen
-button_image = pygame.image.load('App/images/ui/button_new.png')
-button_hover_image = pygame.image.load('App/images/ui/button_hover_new.png')
+button_image = pygame.image.load('images/ui/button_new.png')
+button_hover_image = pygame.image.load('images/ui/button_hover_new.png')
 button_data = [
    {"text": "Sandbox", "rect": pygame.Rect(451, 250, 250, 60), "screen": "sandbox"},
    {"text": "Level Select", "rect": pygame.Rect(451, 340, 250, 60), "screen": "levels"},
@@ -139,10 +139,10 @@ def draw_grid():
         pygame.draw.line(screen, BLACK, (x, 0), (x, SCREEN_HEIGHT))
     for y in range(0, SCREEN_HEIGHT, SCREEN_HEIGHT // nbr_column):
         pygame.draw.line(screen, BLACK, (0, y), (SCREEN_WIDTH, y))
-    side_ui = pygame.image.load('App/images/ui/side ui.png')
-    top_ui = pygame.image.load('App/images/ui/top ui.png')
-    bottom_ui = pygame.image.load('App/images/ui/bottom ui.png')
-    grid = pygame.image.load('App/images/ui/grid.png')
+    side_ui = pygame.image.load('images/ui/side ui.png')
+    top_ui = pygame.image.load('images/ui/top ui.png')
+    bottom_ui = pygame.image.load('images/ui/bottom ui.png')
+    grid = pygame.image.load('images/ui/grid.png')
     screen.blit(side_ui, (0,0)) # Left
     screen.blit(side_ui, (896,0)) # Right
     screen.blit(top_ui, (256,0)) # Top
@@ -159,13 +159,13 @@ def grid_area(num_resistors, num_bulbs, num_switch):
     component_rotations = []
     def_img_size = (32,32)
     bulb_img_size = (60,60)
-    Res100 = pygame.image.load('App/images/resistors/resistor 100.png')
+    Res100 = pygame.image.load('images/resistors/resistor 100.png')
     Res100 = pygame.transform.scale(Res100, def_img_size)
-    bulb_off = pygame.transform.scale(pygame.image.load('App/images/lightbulb off/lightbulb off left right.png'), def_img_size)
-    bulb_on = pygame.transform.scale(pygame.image.load('App/images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
-    switch_on = pygame.transform.scale(pygame.image.load('App/images/switch/switch on.png'), bulb_img_size)
-    switch_off = pygame.transform.scale(pygame.image.load('App/images/switch/switch off.png'), def_img_size)
-    wire_long = pygame.transform.scale(pygame.image.load('App/images/wires/wire line.png'), def_img_size)
+    bulb_off = pygame.transform.scale(pygame.image.load('images/lightbulb off/lightbulb off left right.png'), def_img_size)
+    bulb_on = pygame.transform.scale(pygame.image.load('images/lightbulb on/lightbulb on left right.png'), bulb_img_size)
+    switch_on = pygame.transform.scale(pygame.image.load('images/switch/switch on.png'), bulb_img_size)
+    switch_off = pygame.transform.scale(pygame.image.load('images/switch/switch off.png'), def_img_size)
+    wire_long = pygame.transform.scale(pygame.image.load('images/wires/wire line.png'), def_img_size)
     for i in range(num_resistors):
         x = 5 * (BOX_WIDTH + BOX_SPACING) + BOX_SPACING
         y = SCREEN_HEIGHT - BOX_HEIGHT - 20  
@@ -318,11 +318,11 @@ def pixel2grid(x,y):
     return round((x-256)/32),round((y-32)/32)
 
 def dev():
-    main_frame = pygame.image.load('App/images/aboutdev/main frame.png')
+    main_frame = pygame.image.load('images/aboutdev/main frame.png')
     main_frame = pygame.transform.scale(main_frame, (384,192))
-    sec_frame = pygame.image.load('App/images/aboutdev/sec frame.png')
+    sec_frame = pygame.image.load('images/aboutdev/sec frame.png')
     sec_frame = pygame.transform.scale(sec_frame, (384, 96))
-    connect_frame = pygame.image.load('App/images/aboutdev/connection frame.png')
+    connect_frame = pygame.image.load('images/aboutdev/connection frame.png')
     connect_frame = pygame.transform.scale(connect_frame, (16, 32))
     #text_surface_main = button_font.render(button["text"], True, WHITE)
     #text_surface_sec = button_font.render(button["text"], True, WHITE)

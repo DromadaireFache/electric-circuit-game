@@ -281,7 +281,39 @@ def grid_area(num_resistors, num_bulbs, num_switch):
         for wire in wires:
             screen.blit(wire_long, (wire.x, wire.y))
         pygame.display.flip()  # Update the screen
+def level_screen():
+    level_button_data = [
+        {'Text' : '1', 'rect': pygame.Rect(128,128,250,28), 'screen' : 'lvl 1' },
+        {'Text' : '2', 'rect': pygame.Rect(128,128,250,58), 'screen' : 'lvl 2'},
+    ]
 
+    while True:
+        current_screen = 'levels'
+        mouse_pos = pygame.mouse.get_pos()
+        for level in level_button_data:
+            rect = level["rect"]
+            text_surface = button_font.render(level["Text"], True, WHITE)
+            text_rect = text_surface.get_rect(center=rect.center)
+            screen.blit(text_surface, text_rect)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if current_screen == "levels":
+                    for button in level_button_data:
+                        if button["rect"].collidepoint(mouse_pos):
+                            current_screen = button["screen"]
+                elif current_screen == "lvl 1":
+                    back_button = pygame.Rect(20, 20, 100, 50)
+                    if back_button.collidepoint(mouse_pos):
+                        current_screen = "levels"
+                elif current_screen == 'lvl 2':
+                    back_button = pygame.Rect(20, 20, 100, 50)
+                    if back_button.collidepoint(mouse_pos):
+                        current_screen = 'levels'
+        pygame.display.flip()
 def dev():
     main_frame = pygame.image.load('images/aboutdev/main frame.png')
     main_frame = pygame.transform.scale(main_frame, (384,192))
@@ -334,6 +366,8 @@ def main():
             back_fct(mouse_pos)
         
         elif current_screen == 'levels':
+            screen.fill(RED)
+            level_screen()
             back_fct(mouse_pos)
         
         elif current_screen == 'nerd_stuff':
